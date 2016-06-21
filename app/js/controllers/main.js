@@ -24,6 +24,13 @@ export default class MainController extends BaseController {
   }
 
   main() {
+    if (screen && 'orientation' in screen && 'lock' in screen.orientation) {
+      screen.orientation.lock('landscape')
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+
     location.hash = '';
     location.hash = 'users/login';
   }
