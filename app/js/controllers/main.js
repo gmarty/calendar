@@ -1,5 +1,6 @@
 import BaseController from './base';
 import UsersController from './users';
+import RemindersController from './reminders';
 
 const p = Object.freeze({
   controllers: Symbol('controllers'),
@@ -14,10 +15,12 @@ export default class MainController extends BaseController {
     const options = { mountNode };
 
     const usersController = new UsersController(options);
+    const remindersController = new RemindersController(options);
 
     this[p.controllers] = {
       '': usersController,
       'users/(.+)': usersController,
+      'reminders': remindersController,
     };
 
     window.addEventListener('hashchange', this[p.onHashChanged].bind(this));
@@ -32,7 +35,10 @@ export default class MainController extends BaseController {
     }
 
     location.hash = '';
-    location.hash = 'users/login';
+    setTimeout(() => {
+      //location.hash = 'users/login';
+      location.hash = 'reminders';
+    }, 16);
   }
 
   /**

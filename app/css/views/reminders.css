@@ -1,0 +1,27 @@
+.reminders {
+  max-width: 48rem;
+  min-height: 100%;
+  margin: 5rem auto 0;
+  padding: 5rem 5rem 0;
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+  background: #fff;
+}
+
+.reminders__month {
+  color: #0ca8a4;
+  font-size: 6rem;
+  font-weight: 100;
+}
+
+.reminders__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reminders__date {
+  width: 5rem;
+  color: #555;
+  font-size: 1rem;
+}

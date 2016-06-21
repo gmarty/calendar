@@ -80,6 +80,10 @@ gulp.task('copy-app-common', () => {
     gulp.src('./node_modules/alameda/alameda.js')
       .pipe(rename('js/alameda.js')),
 
+    // Components.
+    gulp.src('./node_modules/moment/min/moment-with-locales.min.js')
+      .pipe(rename('js/components/moment.js')),
+
     // Polyfills.
     gulp.src('./node_modules/whatwg-fetch/fetch.js')
       .pipe(rename('js/polyfills/fetch.js'))

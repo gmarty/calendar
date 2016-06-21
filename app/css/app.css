@@ -1,5 +1,6 @@
 @import 'FiraSans/font.css';
 @import 'views/user-login.css';
+@import 'views/reminders.css';
 
 /** General styles **/
 html {

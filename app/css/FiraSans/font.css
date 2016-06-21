@@ -1,6 +1,20 @@
 @font-face {
   font-family: 'Fira Sans';
   font-style: normal;
+  font-weight: 100;
+  src: local('Fira Sans Hair'), local('Fira-Sans-Hair'), url('FiraSans-Hair.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 100;
+  src: local('Fira Sans Hair Italic'), local('Fira-Sans-Hair-Italic'), url('FiraSans-HairItalic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
   font-weight: 300;
   src: local('Fira Sans Light'), local('Fira-Sans-Light'), url('FiraSans-Light.woff') format('woff');
 }
