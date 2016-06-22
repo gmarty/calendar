@@ -15,6 +15,20 @@
 @font-face {
   font-family: 'Fira Sans';
   font-style: normal;
+  font-weight: 200;
+  src: local('Fira Sans Ultra Light'), local('Fira-Sans-Ultra-Light'), url('FiraSans-UltraLight.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 200;
+  src: local('Fira Sans Ultra Light Italic'), local('Fira-Sans-Ultra-Light-Italic'), url('FiraSans-UltraLightItalic.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
   font-weight: 300;
   src: local('Fira Sans Light'), local('Fira-Sans-Light'), url('FiraSans-Light.woff') format('woff');
 }
