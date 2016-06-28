@@ -22,7 +22,7 @@
     "no-undef": ["error"],
     "no-unused-vars": ["error", { "vars": "all", "args": "after-used" }],
     "no-use-before-define": ["error", { "functions": false, "classes": true }],
-    "quotes": ["error", "single"],
+    "quotes": ["warn", "single"],
     "semi": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
     "guard-for-in": ["error"],
