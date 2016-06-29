@@ -18,7 +18,7 @@ export default class WakeWordRecogniser {
     this.recogniser.numGroups = numGroups;
     this.recogniser.groupSize = groupSize;
 
-    this.recogniser.keywordSpottedCallback = this.onKeywordSpotted;
+    Object.seal(this);
   }
 
   startListening() {

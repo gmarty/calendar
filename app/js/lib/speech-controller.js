@@ -1,8 +1,9 @@
 'use strict';
 
 import EventDispatcher from './common/event-dispatcher';
-import WakeWordRecogniser from './wakeword/recogniser.js';
-import SpeechRecogniser from './speech-recogniser';
+import WakeWordRecogniser from './wakeword/recogniser';
+import SpeechRecogniser from './speech/recogniser';
+import IntentParser from './intent-parser';
 
 const p = Object.freeze({
   // Properties
@@ -17,7 +18,7 @@ const p = Object.freeze({
   handleKeywordSpotted: Symbol('handleKeywordSpotted'),
   startSpeechRecognition: Symbol('startSpeechRecognition'),
   handleSpeechRecognitionEnd: Symbol('handleSpeechRecognitionEnd'),
-  parseIntent: Symbol('parseIntent'),
+  intentParser: Symbol('intentParser'),
   actOnIntent: Symbol('actOnIntent'),
 });
 
@@ -45,6 +46,7 @@ export default class SpeechController extends EventDispatcher {
 
     const wakeWordRecogniser = new WakeWordRecogniser();
     const speechRecogniser = new SpeechRecogniser();
+    this[p.intentParser] = new IntentParser();
 
     wakeWordRecogniser.setOnKeywordSpottedCallback(
       this[p.handleKeywordSpotted].bind(this));
@@ -53,19 +55,21 @@ export default class SpeechController extends EventDispatcher {
     this[p.wakewordModelUrl] = '/data/wakeword_model.json';
 
     this[p.speechRecogniser] = speechRecogniser;
-  }
 
-  [p.initialiseSpeechRecognition]() {
-    return fetch('/data/wakeword_model.json')
-      .then((response) => response.json())
-      .then((model) => {
-        this[p.wakewordRecogniser].loadModel(model);
-      });
+    Object.seal(this);
   }
 
   start() {
     return this[p.initialiseSpeechRecognition]()
       .then(this[p.startListeningForWakeword].bind(this));
+  }
+
+  [p.initialiseSpeechRecognition]() {
+    return fetch(this[p.wakewordModelUrl])
+      .then((response) => response.json())
+      .then((model) => {
+        this[p.wakewordRecogniser].loadModel(model);
+      });
   }
 
   [p.startListeningForWakeword]() {
@@ -84,31 +88,25 @@ export default class SpeechController extends EventDispatcher {
     return this[p.stopListeningForWakeword]()
       .then(this[p.startSpeechRecognition].bind(this))
       .then(this[p.handleSpeechRecognitionEnd].bind(this))
-      .then(this[p.startListeningForWakeword].bind(this));
+      .then(this[p.startListeningForWakeword].bind(this))
+      .catch(this[p.startListeningForWakeword].bind(this));
   }
 
   [p.startSpeechRecognition]() {
     this.emit(EVENT_INTERFACE[3]);
-
-    return this[p.speechRecogniser]
-      .listenForUtterance();
+    return this[p.speechRecogniser].listenForUtterance();
   }
 
   [p.handleSpeechRecognitionEnd](result) {
     this.emit(EVENT_INTERFACE[4], result);
 
     // Parse intent
-    return this[p.parseIntent](result.phrase)
+    return this[p.intentParser].parse(result.utterance)
       .then(this[p.actOnIntent].bind(this));
   }
 
-  [p.parseIntent]() {
-    // Parse  - return 'result' (TBD) async
-    return Promise.resolve();
-  }
-
-  [p.actOnIntent]() {
+  [p.actOnIntent](reminder = {}) {
     // Act - return 'result' (TBD) async
-    return Promise.resolve();
+    return Promise.resolve(reminder);
   }
 }

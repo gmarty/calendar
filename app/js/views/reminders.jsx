@@ -5,8 +5,10 @@ import moment from 'components/moment';
 import ReminderItem from './reminders/reminder-item';
 
 export default class Reminders extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
+    this.speechController = props.speechController;
 
     moment.locale(navigator.languages || navigator.language || 'en-US');
 
@@ -23,7 +25,7 @@ export default class Reminders extends React.Component {
         id: k++,
         recipient: 'Guillaume',
         content: 'File a bug',
-        datetime: Date.now() + 2 * 60 * 60 * 1000,
+        datetime: Date.now() + 2.5 * 60 * 60 * 1000,
       },
       {
         id: k++,
@@ -35,7 +37,7 @@ export default class Reminders extends React.Component {
         id: k++,
         recipient: 'Sam',
         content: 'Attend ping pong competition',
-        datetime: Date.now() + 15 * 60 * 60 * 24 * 1000,
+        datetime: Date.now() + 10.5 * 60 * 60 * 24 * 1000,
       },
       {
         id: k++,
@@ -44,6 +46,7 @@ export default class Reminders extends React.Component {
         datetime: Date.now() + 45 * 60 * 60 * 24 * 1000,
       },
     ];
+
     // Cluster reminders by month, then by date.
     reminders = _.groupBy(reminders, (r) => {
       return moment(r.datetime).format('YYYY/MM');
@@ -58,6 +61,17 @@ export default class Reminders extends React.Component {
     console.log(reminders);
 
     this.state = { reminders };
+
+    this.speechController.on(
+      'wakelistenstart', () => console.log.bind(console));
+
+    this.speechController.on('wakelistenstop', () => console.log.bind(console));
+    this.speechController.on('wakeheard', () => console.log.bind(console));
+    this.speechController.on(
+      'speechrecognitionstart', () => console.log.bind(console));
+
+    this.speechController.on(
+      'speechrecognitionstop', () => console.log.bind(console));
   }
 
   render() {
@@ -76,7 +90,7 @@ export default class Reminders extends React.Component {
               <div key={key} className="reminders__day">
                 <div className="reminders__day-date">
                   <div className="reminders__day-mday">
-                    {date.format('D')}
+                    {date.format('DD')}
                   </div>
                   <div className="reminders__day-wday">
                     {date.format('ddd')}
@@ -103,3 +117,7 @@ export default class Reminders extends React.Component {
     );
   }
 }
+
+Reminders.propTypes = {
+  speechController: React.PropTypes.object.isRequired,
+};

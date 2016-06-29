@@ -13,9 +13,9 @@ export default class MainController extends BaseController {
   constructor() {
     super();
 
-    const speechController = new SpeechController();
     const mountNode = document.querySelector('.app-view-container');
-    const options = { mountNode };
+    const speechController = new SpeechController();
+    const options = { mountNode, speechController };
 
     const usersController = new UsersController(options);
     const remindersController = new RemindersController(options);
@@ -25,17 +25,6 @@ export default class MainController extends BaseController {
       'users/(.+)': usersController,
       'reminders': remindersController,
     };
-
-    speechController.on(
-      'wakelistenstart', () => console.log('wakelistenstart'));
-
-    speechController.on('wakelistenstop', () => console.log('wakelistenstop'));
-    speechController.on('wakeheard', () => console.log('wakeheard'));
-    speechController.on(
-      'speechrecognitionstart', () => console.log('speechrecognitionstart'));
-
-    speechController.on(
-      'speechrecognitionstop', () => console.log('speechrecognitionstop'));
 
     this[p.speechController] = speechController;
 
@@ -50,9 +39,10 @@ export default class MainController extends BaseController {
         });
     }
 
-    this[p.speechController].start().then(() => {
-      console.log('Speech controller started');
-    });
+    this[p.speechController].start()
+      .then(() => {
+        console.log('Speech controller started');
+      });
 
     location.hash = '';
     setTimeout(() => {

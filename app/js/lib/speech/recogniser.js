@@ -29,7 +29,7 @@ export default class SpeechRecogniser {
   listenForUtterance() {
     if (!this[p.supportsRecognition]) {
       return Promise.reject(
-          new Error('Speech recognition not supported in this browser'));
+        new Error('Speech recognition not supported in this browser'));
     }
 
     return new Promise((resolve, reject) => {

@@ -7,7 +7,9 @@ import Reminders from '../views/reminders';
 export default class RemindersController extends BaseController {
   main() {
     ReactDOM.render(
-      React.createElement(Reminders, {}), this.mountNode
+      React.createElement(Reminders, {
+        speechController: this.speechController,
+      }), this.mountNode
     );
   }
 }
