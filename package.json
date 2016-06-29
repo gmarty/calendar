@@ -21,6 +21,7 @@
   "license": "MPL2",
   "dependencies": {
     "alameda": "^1.0.0",
+    "chrono-node": "^1.2.3",
     "jsspeechrecognizer": "https://github.com/samgiles/JsSpeechRecognizer.git",
     "lodash": "^4.13.1",
     "moment": "^2.13.0",

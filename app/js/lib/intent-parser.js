@@ -1,5 +1,7 @@
 'use strict';
 
+import chrono from 'components/chrono';
+
 /*
 Examples of supported phrases:
 Remind me to pick Sasha from Santa Clara University at 5PM today.
@@ -132,7 +134,10 @@ export default class IntentParser {
   }
 
   [p.parseDatetime](string = '') {
-    return string.trim();
+    string = string.trim();
+    const datetime = chrono.parseDate(string);
+
+    return datetime;
   }
 
   [p.normalise](string = '', locale = this.locale) {

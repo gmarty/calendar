@@ -82,12 +82,14 @@ gulp.task('copy-app-common', () => {
       .pipe(rename('js/alameda.js')),
 
     // Components.
+    gulp.src('./node_modules/jsspeechrecognizer/dist/JsSpeechRecognizer.js')
+      .pipe(rename('js/components/jsspeechrecognizer.js')),
     gulp.src('./node_modules/lodash/lodash.min.js')
       .pipe(rename('js/components/lodash.js')),
     gulp.src('./node_modules/moment/min/moment-with-locales.min.js')
       .pipe(rename('js/components/moment.js')),
-    gulp.src('./node_modules/jsspeechrecognizer/dist/JsSpeechRecognizer.js')
-      .pipe(rename('js/components/jsspeechrecognizer.js')),
+    gulp.src('./node_modules/chrono-node/chrono.min.js')
+      .pipe(rename('js/components/chrono.js')),
 
     // Polyfills.
     gulp.src('./node_modules/whatwg-fetch/fetch.js')
