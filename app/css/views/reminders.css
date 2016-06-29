@@ -30,7 +30,7 @@
   position: sticky;
   top: 5rem;
   max-height: 9rem;
-  margin: 1rem 2rem 0 0;
+  margin: 0.5rem 2rem 0 0;
   padding: 0;
   text-align: center;
   background: #fff;
@@ -93,6 +93,11 @@
   background: #fff;
   font-size: 1.8rem;
   font-weight: 300;
+}
+
+/* Capitalise the first letter of reminder actions. */
+.reminders__item-text::first-letter {
+  text-transform: capitalize;
 }
 
 .reminders__item-content.red {

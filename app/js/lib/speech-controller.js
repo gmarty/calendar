@@ -19,7 +19,6 @@ const p = Object.freeze({
   startSpeechRecognition: Symbol('startSpeechRecognition'),
   handleSpeechRecognitionEnd: Symbol('handleSpeechRecognitionEnd'),
   intentParser: Symbol('intentParser'),
-  actOnIntent: Symbol('actOnIntent'),
 });
 
 const EVENT_INTERFACE = [
@@ -38,6 +37,9 @@ const EVENT_INTERFACE = [
 
   // Emit when the speech recognition engine returns a recognised phrase
   'speechrecognitionstop',
+
+  // Emit when an intent is successfully parsed and we have a reminder object.
+  'reminder',
 ];
 
 export default class SpeechController extends EventDispatcher {
@@ -101,12 +103,9 @@ export default class SpeechController extends EventDispatcher {
     this.emit(EVENT_INTERFACE[4], result);
 
     // Parse intent
-    return this[p.intentParser].parse(result.utterance)
-      .then(this[p.actOnIntent].bind(this));
-  }
-
-  [p.actOnIntent](reminder = {}) {
-    // Act - return 'result' (TBD) async
-    return Promise.resolve(reminder);
+    this[p.intentParser].parse(result.utterance)
+      .then((reminder) => {
+        this.emit(EVENT_INTERFACE[5], reminder);
+      });
   }
 }

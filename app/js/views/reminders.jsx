@@ -14,70 +14,93 @@ export default class Reminders extends React.Component {
 
     let k = 0;
 
-    let reminders = [
+    const reminders = [
       {
         id: k++,
-        recipient: 'Guillaume',
+        recipient: ['Guillaume'],
         content: 'Get a haircut',
         datetime: Date.now() + 1 * 60 * 60 * 1000,
       },
       {
         id: k++,
-        recipient: 'Guillaume',
+        recipient: ['Guillaume'],
         content: 'File a bug',
         datetime: Date.now() + 2.5 * 60 * 60 * 1000,
       },
       {
         id: k++,
-        recipient: 'Julien',
+        recipient: ['Julien'],
         content: 'Do the laundry',
         datetime: Date.now() + 1 * 60 * 60 * 24 * 1000,
       },
       {
         id: k++,
-        recipient: 'Sam',
+        recipient: ['Sam'],
         content: 'Attend ping pong competition',
         datetime: Date.now() + 10.5 * 60 * 60 * 24 * 1000,
       },
       {
         id: k++,
-        recipient: 'Guillaume',
+        recipient: ['Guillaume'],
         content: 'Attend Swan Lake by the Bolshoi Ballet',
         datetime: Date.now() + 45 * 60 * 60 * 24 * 1000,
       },
     ];
 
-    // Cluster reminders by month, then by date.
-    reminders = _.groupBy(reminders, (r) => {
-      return moment(r.datetime).format('YYYY/MM');
-    });
-
-    Object.keys(reminders).forEach((key) => {
-      reminders[key] = _.groupBy(reminders[key], (r) => {
-        return moment(r.datetime).format('YYYY/MM/DD');
-      });
-    });
-
-    console.log(reminders);
-
     this.state = { reminders };
 
-    this.speechController.on(
-      'wakelistenstart', () => console.log.bind(console));
+    this.speechController.on('wakelistenstart', () => {
+      console.log('wakelistenstart');
+    });
+    this.speechController.on('wakelistenstop', () => {
+      console.log('wakelistenstop');
+    });
+    this.speechController.on('wakeheard', () => {
+      console.log('wakeheard');
+    });
+    this.speechController.on('speechrecognitionstart', () => {
+      console.log('speechrecognitionstart');
+    });
+    this.speechController.on('speechrecognitionstop', () => {
+      console.log('speechrecognitionstop');
+    });
+    this.speechController.on('reminder', (reminder) => {
+      console.log('reminder', reminder);
+      const reminders = this.state.reminders;
+      reminders.push({
+        id: reminders.length,
+        recipient: reminder.users,
+        content: reminder.action,
+        datetime: reminder.time,
+      });
 
-    this.speechController.on('wakelistenstop', () => console.log.bind(console));
-    this.speechController.on('wakeheard', () => console.log.bind(console));
-    this.speechController.on(
-      'speechrecognitionstart', () => console.log.bind(console));
-
-    this.speechController.on(
-      'speechrecognitionstop', () => console.log.bind(console));
+      this.setState(reminders);
+    });
   }
 
   render() {
-    const reminderNodes = Object.keys(this.state.reminders).map((key) => {
+    let reminders = this.state.reminders;
+
+    // Sort all the reminders chronologically.
+    reminders = reminders.sort((a, b) => {
+      return a.datetime - b.datetime;
+    });
+
+    // Group the reminders by month.
+    reminders = _.groupBy(reminders, (reminder) => {
+      return moment(reminder.datetime).format('YYYY/MM');
+    });
+
+    // For each month, group the reminders by day.
+    Object.keys(reminders).forEach((month) => {
+      reminders[month] = _.groupBy(reminders[month], (reminder) => {
+        return moment(reminder.datetime).format('YYYY/MM/DD');
+      });
+    });
+
+    const reminderNodes = Object.keys(reminders).map((key) => {
       const month = moment(key, 'YYYY/MM').format('MMMM');
-      const reminderMonth = this.state.reminders[key];
+      const reminderMonth = reminders[key];
 
       return (
         <div key={key}>

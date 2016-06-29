@@ -10,7 +10,7 @@ export default class ReminderItem extends React.Component {
     this.reminder = props.reminder;
   }
 
-  getColour(name) {
+  getColour(name = '') {
     const hash = (string) => {
       let hash = 0, i, chr, len;
       if (string.length === 0) {
@@ -31,9 +31,9 @@ export default class ReminderItem extends React.Component {
     const reminder = this.reminder;
     const contentClassName = [
       'reminders__item-content',
-      this.getColour(reminder.recipient),
+      this.getColour(reminder.recipient.join(' ')),
     ]
-      .join(' ');
+      .join(' and ');
 
     return (
       <li className="reminders__item">

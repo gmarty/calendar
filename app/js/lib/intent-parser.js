@@ -22,7 +22,7 @@ const p = Object.freeze({
   regexps: Symbol('regexps'),
 
   // Methods
-  parseRecipient: Symbol('parseRecipient'),
+  parseUsers: Symbol('parseUsers'),
   parseAction: Symbol('parseAction'),
   parseDatetime: Symbol('parseDatetime'),
   normalise: Symbol('normalise'),
@@ -99,33 +99,36 @@ export default class IntentParser {
       return Promise.reject('Empty string.');
     }
 
-    let candidate = null;
+    return new Promise((resolve, reject) => {
+      const successful = this[p.regexps][this.locale].some((pattern) => {
+        if (!pattern.patterns.test(phrase)) {
+          return false;
+        }
 
-    this[p.regexps][this.locale].some((pattern) => {
-      if (!pattern.patterns.test(phrase)) {
-        return false;
+        const segments = pattern.patterns.exec(phrase);
+        segments.shift();
+
+        const users = this[p.parseUsers](segments[pattern.placeholders.user]);
+        const action =
+          this[p.parseAction](segments[pattern.placeholders.action]);
+        const time = this[p.parseDatetime](segments[pattern.placeholders.time]);
+
+        if (time === null) {
+          reject('Time could not be parsed.');
+          return false; // Try next patterns.
+        }
+
+        resolve({ users, action, time });
+        return true;
+      });
+
+      if (!successful) {
+        return reject('Unsupported intent format.');
       }
-
-      const segments = pattern.patterns.exec(phrase);
-      segments.shift();
-
-      const user = this[p.parseRecipient](segments[pattern.placeholders.user]);
-      const action = this[p.parseAction](segments[pattern.placeholders.action]);
-      const time = this[p.parseDatetime](segments[pattern.placeholders.time]);
-
-      candidate = Promise.resolve({ user, action, time });
-
-      return true;
     });
-
-    if (candidate) {
-      return candidate;
-    }
-
-    return Promise.reject('Unsupported intent format.');
   }
 
-  [p.parseRecipient](string = '') {
+  [p.parseUsers](string = '') {
     return [string.trim()];
   }
 
