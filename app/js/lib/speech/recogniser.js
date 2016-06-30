@@ -64,4 +64,11 @@ export default class SpeechRecogniser {
       this[p.recognition].start();
     });
   }
+
+  abort() {
+    this[p.recognition].abort();
+    this[p.isListening] = false;
+
+    return Promise.resolve();
+  }
 }

@@ -3,6 +3,10 @@ import UsersController from './users';
 import RemindersController from './reminders';
 import SpeechController from '../lib/speech-controller';
 
+import React from 'components/react';
+import ReactDOM from 'components/react-dom';
+import Microphone from '../views/microphone';
+
 const p = Object.freeze({
   controllers: Symbol('controllers'),
   onHashChanged: Symbol('onHashChanged'),
@@ -49,6 +53,12 @@ export default class MainController extends BaseController {
       //location.hash = 'users/login';
       location.hash = 'reminders';
     }, 16);
+
+    ReactDOM.render(
+      React.createElement(Microphone, {
+        speechController: this[p.speechController],
+      }), document.querySelector('.microphone')
+    );
   }
 
   /**

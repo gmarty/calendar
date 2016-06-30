@@ -1,6 +1,7 @@
 @import 'FiraSans/font.css';
 @import 'views/user-login.css';
 @import 'views/reminders.css';
+@import 'views/microphone.css';
 
 /** General styles **/
 html {
