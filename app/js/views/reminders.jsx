@@ -8,46 +8,28 @@ export default class Reminders extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      reminders: [],
+    };
+
     this.speechController = props.speechController;
+    this.server = props.server;
 
     moment.locale(navigator.languages || navigator.language || 'en-US');
+  }
 
-    let k = 0;
+  componentDidMount() {
+    this.server.reminders.getAll()
+      .then((reminders) => {
+        reminders = reminders.map((reminder) => ({
+          id: reminder.id,
+          recipient: [reminder.recipient],
+          content: reminder.message,
+          datetime: reminder.due,
+        }));
 
-    const reminders = [
-      {
-        id: k++,
-        recipient: ['Guillaume'],
-        content: 'Get a haircut',
-        datetime: Date.now() + 1 * 60 * 60 * 1000,
-      },
-      {
-        id: k++,
-        recipient: ['Guillaume'],
-        content: 'File a bug',
-        datetime: Date.now() + 2.5 * 60 * 60 * 1000,
-      },
-      {
-        id: k++,
-        recipient: ['Julien'],
-        content: 'Do the laundry',
-        datetime: Date.now() + 1 * 60 * 60 * 24 * 1000,
-      },
-      {
-        id: k++,
-        recipient: ['Sam'],
-        content: 'Attend ping pong competition',
-        datetime: Date.now() + 10.5 * 60 * 60 * 24 * 1000,
-      },
-      {
-        id: k++,
-        recipient: ['Guillaume'],
-        content: 'Attend Swan Lake by the Bolshoi Ballet',
-        datetime: Date.now() + 45 * 60 * 60 * 24 * 1000,
-      },
-    ];
-
-    this.state = { reminders };
+        this.setState({ reminders });
+      });
 
     this.speechController.on('wakelistenstart', () => {
       console.log('wakelistenstart');
@@ -74,10 +56,24 @@ export default class Reminders extends React.Component {
         datetime: reminder.time,
       });
 
-      this.setState(reminders);
+      this.setState({ reminders });
+
+      this.server.reminders.set({
+        recipient: reminder.users.join(' '),
+        message: reminder.action,
+        due: Number(reminder.time),
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((res) => {
+          console.error(res);
+        });
     });
   }
 
+  // @todo Add a different view when there's no reminders:
+  // https://github.com/fxbox/calendar/issues/16
   render() {
     let reminders = this.state.reminders;
 
@@ -143,4 +139,5 @@ export default class Reminders extends React.Component {
 
 Reminders.propTypes = {
   speechController: React.PropTypes.object.isRequired,
+  server: React.PropTypes.object.isRequired,
 };

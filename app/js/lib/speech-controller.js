@@ -56,7 +56,7 @@ export default class SpeechController extends EventDispatcher {
     });
 
     this[p.wakewordRecogniser] = wakeWordRecogniser;
-    this[p.wakewordModelUrl] = '/data/wakeword_model.json';
+    this[p.wakewordModelUrl] = 'data/wakeword_model.json';
 
     this[p.speechRecogniser] = speechRecogniser;
 

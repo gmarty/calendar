@@ -1,7 +1,9 @@
 import BaseController from './base';
 import UsersController from './users';
 import RemindersController from './reminders';
+
 import SpeechController from '../lib/speech-controller';
+import Server from '../lib/server/index';
 
 import React from 'components/react';
 import ReactDOM from 'components/react-dom';
@@ -9,8 +11,10 @@ import Microphone from '../views/microphone';
 
 const p = Object.freeze({
   controllers: Symbol('controllers'),
-  onHashChanged: Symbol('onHashChanged'),
   speechController: Symbol('speechController'),
+  server: Symbol('server'),
+
+  onHashChanged: Symbol('onHashChanged'),
 });
 
 export default class MainController extends BaseController {
@@ -19,7 +23,8 @@ export default class MainController extends BaseController {
 
     const mountNode = document.querySelector('.app-view-container');
     const speechController = new SpeechController();
-    const options = { mountNode, speechController };
+    const server = new Server();
+    const options = { mountNode, speechController, server };
 
     const usersController = new UsersController(options);
     const remindersController = new RemindersController(options);
@@ -31,6 +36,7 @@ export default class MainController extends BaseController {
     };
 
     this[p.speechController] = speechController;
+    this[p.server] = server;
 
     window.addEventListener('hashchange', this[p.onHashChanged].bind(this));
   }
@@ -49,14 +55,19 @@ export default class MainController extends BaseController {
       });
 
     location.hash = '';
+
     setTimeout(() => {
-      //location.hash = 'users/login';
-      location.hash = 'reminders';
-    }, 16);
+      if (this[p.server].isLoggedIn) {
+        location.hash = 'reminders';
+      } else {
+        location.hash = 'users/login';
+      }
+    });
 
     ReactDOM.render(
       React.createElement(Microphone, {
         speechController: this[p.speechController],
+        server: this[p.server],
       }), document.querySelector('.microphone')
     );
   }

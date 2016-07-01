@@ -9,9 +9,10 @@ export default class Microphone extends React.Component {
     };
 
     this.speechController = props.speechController;
+    this.server = props.server;
     this.bleep = new Audio();
 
-    this.bleep.src = '../media/cue.wav';
+    this.bleep.src = 'media/cue.wav';
 
     this.speechController.on('wakeheard', () => {
       this.bleep.pause();
@@ -24,6 +25,15 @@ export default class Microphone extends React.Component {
     });
 
     this.click = this.click.bind(this);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (!this.server.isLoggedIn) {
+      return false;
+    }
+
+    // @todo Find a better deep comparison method.
+    return JSON.stringify(this.state) !== JSON.stringify(nextState);
   }
 
   click() {
@@ -41,12 +51,16 @@ export default class Microphone extends React.Component {
   }
 
   render() {
+    if (!this.server.isLoggedIn) {
+      return null;
+    }
+
     const className = this.state.isListening ? 'listening' : '';
 
     return (
       <div className={className} onClick={this.click}>
         <div className="microphone__background"></div>
-        <img className="microphone__icon" src="../css/icons/microphone.svg"/>
+        <img className="microphone__icon" src="css/icons/microphone.svg"/>
       </div>
     );
   }
@@ -54,4 +68,5 @@ export default class Microphone extends React.Component {
 
 Microphone.propTypes = {
   speechController: React.PropTypes.object.isRequired,
+  server: React.PropTypes.object.isRequired,
 };

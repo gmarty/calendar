@@ -9,6 +9,7 @@ export default class RemindersController extends BaseController {
     ReactDOM.render(
       React.createElement(Reminders, {
         speechController: this.speechController,
+        server: this.server,
       }), this.mountNode
     );
   }

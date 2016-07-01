@@ -29,12 +29,15 @@ export default class UsersController extends BaseController {
 
   login() {
     ReactDOM.render(
-      React.createElement(UserLogin, {}), this.mountNode
+      React.createElement(UserLogin, { server: this.server }), this.mountNode
     );
   }
 
   logout() {
-    // Once logged out, we redirect to the login page.
-    location.hash = '#users/login';
+    this.server.logout()
+      .then(() => {
+        // Once logged out, we redirect to the login page.
+        location.hash = 'users/login';
+      });
   }
 }
