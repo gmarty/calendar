@@ -27,15 +27,6 @@ export default class Microphone extends React.Component {
     this.click = this.click.bind(this);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if (!this.server.isLoggedIn) {
-      return false;
-    }
-
-    // @todo Find a better deep comparison method.
-    return JSON.stringify(this.state) !== JSON.stringify(nextState);
-  }
-
   click() {
     if (!this.state.isListening) {
       this.bleep.pause();

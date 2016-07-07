@@ -5,10 +5,6 @@ import RemindersController from './reminders';
 import SpeechController from '../lib/speech-controller';
 import Server from '../lib/server/index';
 
-import React from 'components/react';
-import ReactDOM from 'components/react-dom';
-import Microphone from '../views/microphone';
-
 const p = Object.freeze({
   controllers: Symbol('controllers'),
   speechController: Symbol('speechController'),
@@ -63,13 +59,6 @@ export default class MainController extends BaseController {
         location.hash = 'users/login';
       }
     });
-
-    ReactDOM.render(
-      React.createElement(Microphone, {
-        speechController: this[p.speechController],
-        server: this[p.server],
-      }), document.querySelector('.microphone')
-    );
   }
 
   /**
