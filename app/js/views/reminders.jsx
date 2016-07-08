@@ -14,6 +14,8 @@ export default class Reminders extends React.Component {
 
     this.speechController = props.speechController;
     this.server = props.server;
+    this.debugEvent = this.debugEvent.bind(this);
+    this.onReminder = this.onReminder.bind(this);
 
     moment.locale(navigator.languages || navigator.language || 'en-US');
   }
@@ -31,45 +33,58 @@ export default class Reminders extends React.Component {
         this.setState({ reminders });
       });
 
-    this.speechController.on('wakelistenstart', () => {
-      console.log('wakelistenstart');
-    });
-    this.speechController.on('wakelistenstop', () => {
-      console.log('wakelistenstop');
-    });
-    this.speechController.on('wakeheard', () => {
-      console.log('wakeheard');
-    });
-    this.speechController.on('speechrecognitionstart', () => {
-      console.log('speechrecognitionstart');
-    });
-    this.speechController.on('speechrecognitionstop', () => {
-      console.log('speechrecognitionstop');
-    });
-    this.speechController.on('reminder', (reminder) => {
-      console.log('reminder', reminder);
-      const reminders = this.state.reminders;
-      reminders.push({
-        id: reminders.length,
-        recipient: reminder.users,
-        content: reminder.action,
-        datetime: reminder.time,
-      });
+    this.speechController.on('wakelistenstart', this.debugEvent);
+    this.speechController.on('wakelistenstop', this.debugEvent);
+    this.speechController.on('wakeheard', this.debugEvent);
+    this.speechController.on('speechrecognitionstart', this.debugEvent);
+    this.speechController.on('speechrecognitionstop', this.debugEvent);
+    this.speechController.on('reminder', this.debugEvent);
+    this.speechController.on('reminder', this.onReminder);
+  }
 
-      this.setState({ reminders });
+  componentWillUnmount() {
+    this.speechController.off('wakelistenstart', this.debugEvent);
+    this.speechController.off('wakelistenstop', this.debugEvent);
+    this.speechController.off('wakeheard', this.debugEvent);
+    this.speechController.off('speechrecognitionstart', this.debugEvent);
+    this.speechController.off('speechrecognitionstop', this.debugEvent);
+    this.speechController.off('reminder', this.debugEvent);
+    this.speechController.off('reminder', this.onReminder);
+  }
 
-      this.server.reminders.set({
+  debugEvent(evt) {
+    if (evt.result !== undefined) {
+      console.log(evt.type, evt.result);
+      return;
+    }
+
+    console.log(evt.type);
+  }
+
+  onReminder(evt) {
+    const reminder = evt.result;
+
+    const reminders = this.state.reminders;
+    reminders.push({
+      id: reminders.length,
+      recipient: reminder.users,
+      content: reminder.action,
+      datetime: reminder.time,
+    });
+
+    this.setState({ reminders });
+
+    this.server.reminders
+      .set({
         recipient: reminder.users.join(' '),
         message: reminder.action,
         due: Number(reminder.time),
       })
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((res) => {
-          console.error(res);
-        });
-    });
+      .catch((res) => {
+        // @todo Add some feedback and remove the reminder from the list:
+        // https://github.com/fxbox/calendar/issues/24
+        console.error('Saving the reminder failed.', res);
+      });
   }
 
   // @todo Add a different view when there's no reminders:

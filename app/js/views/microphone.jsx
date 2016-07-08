@@ -37,6 +37,7 @@ export default class Microphone extends React.Component {
       return;
     }
 
+    this.bleep.pause();
     this.setState({ isListening: false });
     this.speechController.stopSpeechRecognition();
   }

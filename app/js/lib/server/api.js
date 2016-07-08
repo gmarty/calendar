@@ -50,8 +50,6 @@ export default class API {
    * @return {Promise}
    */
   post(path, body) {
-    console.log(path, body);
-
     return this[p.onceReady]()
       .then(() => this[p.net].fetchJSON(this[p.getURL](path), 'POST', body));
   }

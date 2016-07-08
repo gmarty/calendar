@@ -50,7 +50,7 @@ export default class SpeechController extends EventDispatcher {
     this[p.intentParser] = new IntentParser();
 
     wakeWordRecogniser.setOnKeywordSpottedCallback(() => {
-      this.emit(EVENT_INTERFACE[2]);
+      this.emit(EVENT_INTERFACE[2], { type: EVENT_INTERFACE[2] });
 
       this.startSpeechRecognition();
     });
@@ -90,27 +90,30 @@ export default class SpeechController extends EventDispatcher {
   }
 
   [p.startListeningForWakeword]() {
-    this.emit(EVENT_INTERFACE[0]);
+    this.emit(EVENT_INTERFACE[0], { type: EVENT_INTERFACE[0] });
     return this[p.wakewordRecogniser].startListening();
   }
 
   [p.stopListeningForWakeword]() {
-    this.emit(EVENT_INTERFACE[1]);
+    this.emit(EVENT_INTERFACE[1], { type: EVENT_INTERFACE[1] });
     return this[p.wakewordRecogniser].stopListening();
   }
 
   [p.listenForUtterance]() {
-    this.emit(EVENT_INTERFACE[3]);
+    this.emit(EVENT_INTERFACE[3], { type: EVENT_INTERFACE[3] });
     return this[p.speechRecogniser].listenForUtterance();
   }
 
   [p.handleSpeechRecognitionEnd](result) {
-    this.emit(EVENT_INTERFACE[4], result);
+    this.emit(EVENT_INTERFACE[4], { type: EVENT_INTERFACE[4], result });
 
     // Parse intent
     this[p.intentParser].parse(result.utterance)
       .then((reminder) => {
-        this.emit(EVENT_INTERFACE[5], reminder);
+        this.emit(EVENT_INTERFACE[5], {
+          type: EVENT_INTERFACE[5],
+          result: reminder,
+        });
       })
       .catch((err) => {
         console.error('Error while parsing the sentence:', err);

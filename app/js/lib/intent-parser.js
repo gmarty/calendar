@@ -161,8 +161,6 @@ export default class IntentParser {
       this[p.regexps][locale] = PATTERNS[locale].patterns.map((phrase) =>
         this[p.buildRegExp](locale, phrase, PATTERNS[locale].placeholders));
     });
-
-    console.log(this[p.regexps]);
   }
 
   [p.buildRegExp](locale = 'en', phrase = '', placeholders) {
