@@ -17,7 +17,13 @@ body {
 
   background: #fff;
   background: linear-gradient(#fff, hsla(178, 87%, 35%, 1)) fixed;
-  font: 300 2.2rem/4.4rem 'Fira Sans', Arial;
+}
+
+body,
+input,
+button,
+select {
+  font: 300 1.1rem/2.2rem 'Fira Sans', Arial;
 }
 
 h1,
@@ -48,8 +54,6 @@ input {
   border: 1px solid #808080;
   border-radius: 0.3rem;
   background: #fff;
-
-  font: 300 2.2rem/4.4rem 'Fira Sans', Arial;
 }
 
 button {
@@ -59,14 +63,37 @@ button {
   border-radius: 0.3rem;
 
   background: #fff;
-  font: 300 2.2rem/4.4rem 'Fira Sans', Arial;
 }
 
-select {
-  font: 300 2.2rem/4.4rem 'Fira Sans', Arial;
-}
-
-/** App specific styles */
+/* App specific styles */
 .app-view-container {
   height: 100%;
+}
+
+/* Small devices (landscape phones, 34em and up) */
+@media (min-width: 34em) {
+  html {
+    font: 400 11px/11px Arial;
+  }
+}
+
+/* Medium devices (tablets, 48em and up) */
+@media (min-width: 48em) {
+  html {
+    font: 400 12px/12px Arial;
+  }
+}
+
+/* Large devices (desktops, 62em and up) */
+@media (min-width: 62em) {
+  html {
+    font: 400 13px/13px Arial;
+  }
+}
+
+/* Extra large devices (large desktops, 75em and up) */
+@media (min-width: 75em) {
+  html {
+    font: 400 14px/14px Arial;
+  }
 }

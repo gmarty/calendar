@@ -1,9 +1,8 @@
 .reminders {
   box-sizing: border-box;
-  max-width: 72rem;
   min-height: 100%;
-  margin: 5rem auto 0;
-  padding: 5rem 5rem 0;
+  margin: 1rem auto 0;
+  padding: 1rem 1rem 0;
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
   background: #fff;
@@ -89,13 +88,14 @@
 
 .reminders__item-text {
   margin: 0.1rem;
-  padding: 0 0 0 1rem;
+  padding: 1rem 0 1rem 1rem;
   background: #fff;
   font-size: 1.8rem;
   font-weight: 300;
 }
 
 /* Capitalise the first letter of reminder actions. */
+.reminders__item-recipient::first-letter,
 .reminders__item-text::first-letter {
   text-transform: capitalize;
 }
@@ -118,4 +118,38 @@
 
 .reminders__item-content.violet {
   background: #8c008c;
+}
+
+/* Small devices (landscape phones, 34em and up) */
+@media (min-width: 34em) {
+  .reminders {
+    margin: 0 auto;
+    padding: 2rem 2rem 0;
+  }
+}
+
+/* Medium devices (tablets, 48em and up) */
+@media (min-width: 48em) {
+  .reminders {
+    margin: 1rem auto 0;
+    padding: 3rem 3rem 0;
+  }
+}
+
+/* Large devices (desktops, 62em and up) */
+@media (min-width: 62em) {
+  .reminders {
+    max-width: 72rem;
+    margin: 3rem auto 0;
+    padding: 5rem 5rem 0;
+  }
+}
+
+/* Extra large devices (large desktops, 75em and up) */
+@media (min-width: 75em) {
+  .reminders {
+    max-width: 72rem;
+    margin: 5rem auto 0;
+    padding: 5rem 5rem 0;
+  }
 }
