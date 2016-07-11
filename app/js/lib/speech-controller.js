@@ -10,6 +10,7 @@ const p = Object.freeze({
   wakewordRecogniser: Symbol('wakewordRecogniser'),
   wakewordModelUrl: Symbol('wakewordModelUrl'),
   speechRecogniser: Symbol('speechRecogniser'),
+  idle: Symbol('idle'),
 
   // Methods
   initialiseSpeechRecognition: Symbol('initialiseSpeechRecognition'),
@@ -45,6 +46,8 @@ export default class SpeechController extends EventDispatcher {
   constructor() {
     super(EVENT_INTERFACE);
 
+    this[p.idle] = true;
+
     const wakeWordRecogniser = new WakeWordRecogniser();
     const speechRecogniser = new SpeechRecogniser();
     this[p.intentParser] = new IntentParser();
@@ -63,17 +66,26 @@ export default class SpeechController extends EventDispatcher {
     Object.seal(this);
   }
 
+  get idle() {
+    return this[p.idle];
+  }
+
   start() {
     return this[p.initialiseSpeechRecognition]()
       .then(this[p.startListeningForWakeword].bind(this));
   }
 
   startSpeechRecognition() {
+    this[p.idle] = false;
+
     return this[p.stopListeningForWakeword]()
       .then(this[p.listenForUtterance].bind(this))
       .then(this[p.handleSpeechRecognitionEnd].bind(this))
       .then(this[p.startListeningForWakeword].bind(this))
-      .catch(this[p.startListeningForWakeword].bind(this));
+      .catch(() => {
+        this.emit(EVENT_INTERFACE[4], { type: EVENT_INTERFACE[4] });
+        this[p.startListeningForWakeword]();
+      });
   }
 
   stopSpeechRecognition() {
@@ -91,6 +103,8 @@ export default class SpeechController extends EventDispatcher {
 
   [p.startListeningForWakeword]() {
     this.emit(EVENT_INTERFACE[0], { type: EVENT_INTERFACE[0] });
+    this[p.idle] = true;
+
     return this[p.wakewordRecogniser].startListening();
   }
 

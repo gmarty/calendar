@@ -14,6 +14,7 @@ export default class Reminders extends React.Component {
 
     this.speechController = props.speechController;
     this.server = props.server;
+    this.refreshInterval = null;
     this.debugEvent = this.debugEvent.bind(this);
     this.onReminder = this.onReminder.bind(this);
 
@@ -33,6 +34,13 @@ export default class Reminders extends React.Component {
         this.setState({ reminders });
       });
 
+    // Refresh the page every 5 minutes if idle.
+    this.refreshInterval = setInterval(() => {
+      if (this.speechController.idle) {
+        location.reload(true);
+      }
+    }, 5 * 60 * 1000);
+
     this.speechController.on('wakelistenstart', this.debugEvent);
     this.speechController.on('wakelistenstop', this.debugEvent);
     this.speechController.on('wakeheard', this.debugEvent);
@@ -43,6 +51,8 @@ export default class Reminders extends React.Component {
   }
 
   componentWillUnmount() {
+    clearInterval(this.refreshInterval);
+
     this.speechController.off('wakelistenstart', this.debugEvent);
     this.speechController.off('wakelistenstop', this.debugEvent);
     this.speechController.off('wakeheard', this.debugEvent);
