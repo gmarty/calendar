@@ -25,7 +25,7 @@ export default class Reminders {
   /**
    * Gets a reminder given its id.
    *
-   * @param {string} id Id of the reminder to retrieve.
+   * @param {string} id The ID of the reminder to retrieve.
    * @return {Promise}
    */
   get(id) {
@@ -36,9 +36,19 @@ export default class Reminders {
    * Create a new reminder.
    *
    * @param {Object} body
-   * @returns {Promise}
+   * @return {Promise}
    */
   set(body) {
     return this[p.api].post(`reminders`, body);
+  }
+
+  /**
+   * Delete a reminder given its ID.
+   *
+   * @param {string} id The ID of the reminder to delete.
+   * @return {Promise}
+   */
+  delete(id) {
+    return this[p.api].delete(`reminders/${id}`);
   }
 }

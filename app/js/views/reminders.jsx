@@ -74,26 +74,44 @@ export default class Reminders extends React.Component {
   onReminder(evt) {
     const reminder = evt.result;
 
-    const reminders = this.state.reminders;
-    reminders.push({
-      id: reminders.length,
-      recipients: reminder.users,
-      content: reminder.action,
-      datetime: reminder.time,
-    });
-
-    this.setState({ reminders });
-
+    // @todo Nice to have: optimistic update.
+    // https://github.com/fxbox/calendar/issues/32
     this.server.reminders
       .set({
         recipients: reminder.users,
         action: reminder.action,
         due: Number(reminder.time),
       })
+      .then((reminder) => {
+        const reminders = this.state.reminders;
+
+        reminders.push({
+          id: reminder.id,
+          recipients: reminder.recipients,
+          content: reminder.action,
+          datetime: reminder.due,
+        });
+
+        this.setState({ reminders });
+      })
       .catch((res) => {
         // @todo Add some feedback and remove the reminder from the list:
         // https://github.com/fxbox/calendar/issues/24
         console.error('Saving the reminder failed.', res);
+      });
+  }
+
+  onDelete(id) {
+    // @todo Nice to have: optimistic update.
+    // https://github.com/fxbox/calendar/issues/32
+    this.server.reminders.delete(id)
+      .then(() => {
+        const reminders = this.state.reminders
+          .filter((reminder) => reminder.id !== id);
+        this.setState({ reminders });
+      })
+      .catch(() => {
+        console.error(`The reminder ${id} could not be deleted.`);
       });
   }
 
@@ -142,8 +160,10 @@ export default class Reminders extends React.Component {
                 </div>
                 <ol className="reminders__list">
                   {remindersDay.map((reminder) => {
-                    return (<ReminderItem key={reminder.id}
-                                          reminder={reminder}
+                    return (<ReminderItem
+                      key={reminder.id}
+                      reminder={reminder}
+                      onDelete={this.onDelete.bind(this, reminder.id)}
                     />);
                   })}
                 </ol>

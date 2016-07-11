@@ -8,9 +8,11 @@ export default class ReminderItem extends React.Component {
     super(props);
 
     this.reminder = props.reminder;
+    this.onDelete = props.onDelete;
   }
 
-  getColour(name = '') {
+  getColour(recipients = []) {
+    const name = recipients.join(' ');
     const hash = (string) => {
       let hash = 0, i, chr, len;
       if (string.length === 0) {
@@ -31,7 +33,7 @@ export default class ReminderItem extends React.Component {
     const reminder = this.reminder;
     const contentClassName = [
       'reminders__item-content',
-      this.getColour(reminder.recipients.join(' ')),
+      this.getColour(reminder.recipients),
     ]
       .join(' and ');
 
@@ -46,6 +48,10 @@ export default class ReminderItem extends React.Component {
           </h3>
           <p className="reminders__item-text">
             {reminder.content}
+            <button className="reminders__delete"
+                    onClick={this.onDelete}>
+              Delete
+            </button>
           </p>
         </div>
       </li>
@@ -55,4 +61,5 @@ export default class ReminderItem extends React.Component {
 
 ReminderItem.propTypes = {
   reminder: React.PropTypes.object.isRequired,
+  onDelete: React.PropTypes.func.isRequired,
 };
