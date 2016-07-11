@@ -76,6 +76,7 @@ export default class Reminders extends React.Component {
 
     // @todo Nice to have: optimistic update.
     // https://github.com/fxbox/calendar/issues/32
+
     this.server.reminders
       .set({
         recipients: reminder.users,
