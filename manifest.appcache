@@ -1,30 +1,21 @@
 CACHE MANIFEST
-# version Thu Jul 07 2016 15:15:36 GMT+0100 (BST)
+# version Mon Jul 11 2016 14:04:20 GMT+0100 (BST)
 CACHE:
 browserconfig.xml
 favicon.ico
 index.html
 manifest.webmanifest
 push-sw.js
-css/app.css
 data/wakeword_model.json
+css/app.css
 img/icon-ios.svg
 img/icon-windows.svg
 img/icon.svg
-media/cue.wav
 js/alameda.js
 js/app.js
 js/bootstrap.js
-css/FiraSans/FiraSans-Bold.woff
-css/FiraSans/FiraSans-BoldItalic.woff
-css/FiraSans/FiraSans-Hair.woff
-css/FiraSans/FiraSans-HairItalic.woff
-css/FiraSans/FiraSans-Italic.woff
-css/FiraSans/FiraSans-Light.woff
-css/FiraSans/FiraSans-LightItalic.woff
-css/FiraSans/FiraSans-Regular.woff
-css/FiraSans/FiraSans-UltraLight.woff
-css/FiraSans/FiraSans-UltraLightItalic.woff
+media/cue.wav
+css/icons/delete.svg
 css/icons/microphone.svg
 css/icons/next.svg
 img/icons/128.png
@@ -64,6 +55,16 @@ js/components/react.js
 js/polyfills/fetch.js
 js/polyfills/url-search-params.js
 js/polyfills/webrtc-adapter.js
+css/FiraSans/FiraSans-Bold.woff
+css/FiraSans/FiraSans-BoldItalic.woff
+css/FiraSans/FiraSans-Hair.woff
+css/FiraSans/FiraSans-HairItalic.woff
+css/FiraSans/FiraSans-Italic.woff
+css/FiraSans/FiraSans-Light.woff
+css/FiraSans/FiraSans-LightItalic.woff
+css/FiraSans/FiraSans-Regular.woff
+css/FiraSans/FiraSans-UltraLight.woff
+css/FiraSans/FiraSans-UltraLightItalic.woff
 install-sw.js
 cache.html
 cache.js

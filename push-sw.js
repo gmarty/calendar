@@ -15,8 +15,8 @@ self.addEventListener('push', (evt) => {
   const obj = evt.data ? evt.data.json() : {};
   console.log('Push received ', obj);
 
-  if (obj && obj.message) {
-    console.log('Got the message %s for %s', obj.message, obj.recipient);
+  if (obj && obj.action) {
+    console.log('Got the action %s for %j', obj.action, obj.recipients);
     evt.waitUntil(processNotification(obj));
   } else {
     console.error('Notification doesnt contain a body, ignoring it: ');
@@ -72,8 +72,18 @@ function notifyClient(obj) {
  * @return {Promise} Promise resolved once the notification is showed.
  */
 function showNotification(obj) {
-  const title = `Reminder for ${obj.recipient}`;
-  const body = obj.message;
+  let title;
+  if (!obj.recipients.length) {
+    title = 'Reminder';
+  } else if (obj.recipients.length === 1) {
+    title = `Reminder for ${obj.recipients[0]}`;
+  } else {
+    const firstRecipients = obj.recipients.slice(0, -1).join(', ');
+    const lastRecipient = obj.recipients[obj.recipients.length - 1];
+    title = `Reminder for ${firstRecipients} and ${lastRecipient}`;
+  }
+
+  const body = obj.action;
   const icon = 'img/icons/512.png';
   const tag = obj.id || 'link-push';
 
