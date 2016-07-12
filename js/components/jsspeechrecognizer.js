@@ -77,26 +77,91 @@
         this.keywordSpottingLastVoiceActivity = 0;
         this.keywordSpottingMaxVoiceActivityGap = 300;
         this.keywordSpottedCallback = null;
-
     }
+
+    JsSpeechRecognizer.prototype.createMockSource = function(mediaUrl) {
+        var _this = this;
+        var destination = this.audioCtx.createMediaStreamDestination();
+
+        var startUtterancePromise =  fetch(mediaUrl).then(function(response) {
+            if (!response.ok) {
+                throw new Error("Could not fetch source");
+            }
+
+            return response.arrayBuffer();
+        }).then(function(mediaData) {
+            return new Promise(function(resolve) {
+                _this.audioCtx.decodeAudioData(mediaData, function(decodedAudio) {
+                    resolve(decodedAudio);
+                });
+            })
+        }).then(function(mediaData) {
+            return _this.generateMockStream(mediaData, destination);
+        });
+
+        return Promise.all([startUtterancePromise, Promise.resolve(destination)]);
+    };
+
+    function createSource(audioContext, buffer, shouldLoop, destination) {
+        var source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.loop = shouldLoop;
+
+        source.connect(destination);
+
+        return {
+            source: source
+        };
+    }
+
+    JsSpeechRecognizer.prototype.generateMockStream = function(utteranceData, destination) {
+        var _this = this;
+
+        // Connect a silence generator, and an utterance node to the destination
+
+        // Create a silent oscillator node
+        var oscillator = this.audioCtx.createOscillator();
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 1; // Hz (inaudible to humans)
+
+        oscillator.connect(destination);
+        oscillator.start();
+
+        return Promise.resolve().then(function() {
+            return function() {
+                var utteranceSource = createSource(_this.audioCtx, utteranceData, false, destination);
+                utteranceSource.source.start(0);
+            };
+        });
+    };
 
     /**
      * Requests access to the microphone.
      * @public
      */
-    JsSpeechRecognizer.prototype.openMic = function() {
-
+    JsSpeechRecognizer.prototype.openMic = function(usingSource) {
+        var _this = this;
         var constraints = {
             "audio": true
         };
 
-        navigator.getUserMedia(constraints, successCallback, errorCallback);
+        // If argument passed to use existing source, just connect that source and
+        // return
+        if (usingSource) {
+            return connectStream();
+        }
 
-        var _this = this;
-        // Acess to the microphone was granted
-        function successCallback(stream) {
-            _this.stream = stream;
-            _this.source = _this.audioCtx.createMediaStreamSource(stream);
+        function connectStream(stream) {
+
+            if (stream && !usingSource) {
+                console.log("using microphone");
+                // Acess to the microphone was granted
+                _this.source = _this.audioCtx.createMediaStreamSource(stream);
+            } else {
+                console.log("Using source: ", usingSource);
+                // Use a fake stream
+                _this.source = _this.audioCtx.createMediaStreamSource(usingSource.stream);
+            }
 
             _this.source.connect(_this.analyser);
             _this.analyser.connect(_this.scriptNode);
@@ -105,9 +170,15 @@
             _this.scriptNode.connect(_this.audioCtx.destination);
         }
 
-        function errorCallback(error) {
+        return new Promise(function(resolve, reject) {
+            navigator.getUserMedia(constraints, resolve, reject);
+            return;
+        }).then(function(stream) {
+            connectStream(stream);
+        }).catch(function(error) {
             console.error('navigator.getUserMedia error: ', error);
-        }
+            throw error;
+        });
     };
 
     /**
@@ -463,6 +534,7 @@
 
             this.resetBuffers();
             if (this.keywordSpottedCallback !== undefined && this.keywordSpottedCallback !== null) {
+                console.log(allResults[0]);
                 this.keywordSpottedCallback(allResults[0]);
             }
 

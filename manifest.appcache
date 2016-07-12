@@ -1,16 +1,15 @@
 CACHE MANIFEST
-# version Tue Jul 12 2016 11:46:48 GMT+0100 (BST)
+# version Tue Jul 12 2016 14:14:41 GMT+0100 (BST)
 CACHE:
 browserconfig.xml
 favicon.ico
 index.html
 manifest.webmanifest
-push-sw.js
+data/wakeword_model.json
 css/app.css
 img/icon-ios.svg
 img/icon-windows.svg
 img/icon.svg
-data/wakeword_model.json
 js/alameda.js
 js/app.js
 js/bootstrap.js
