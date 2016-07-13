@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# version Tue Jul 12 2016 14:21:17 GMT+0100 (BST)
+# version Wed Jul 13 2016 10:17:47 GMT+0100 (BST)
 CACHE:
 browserconfig.xml
 favicon.ico
@@ -38,12 +38,6 @@ img/icons/512.png
 img/icons/60.png
 img/icons/64.png
 img/icons/90.png
-js/components/chrono.js
-js/components/jsspeechrecognizer.js
-js/components/lodash.js
-js/components/moment.js
-js/components/react-dom.js
-js/components/react.js
 img/static-icons/apple-touch-icon-114x114.png
 img/static-icons/apple-touch-icon-120x120.png
 img/static-icons/apple-touch-icon-144x144.png
@@ -61,6 +55,12 @@ img/static-icons/mstile-310x150.png
 img/static-icons/mstile-310x310.png
 img/static-icons/mstile-70x70.png
 img/static-icons/safari-pinned-tab.svg
+js/components/chrono.js
+js/components/jsspeechrecognizer.js
+js/components/lodash.js
+js/components/moment.js
+js/components/react-dom.js
+js/components/react.js
 js/polyfills/fetch.js
 js/polyfills/url-search-params.js
 js/polyfills/webrtc-adapter.js
