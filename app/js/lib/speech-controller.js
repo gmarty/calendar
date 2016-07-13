@@ -3,6 +3,7 @@
 import EventDispatcher from './common/event-dispatcher';
 import WakeWordRecogniser from './wakeword/recogniser';
 import SpeechRecogniser from './speech/recogniser';
+import SpeechSynthesis from './speech/synthesis';
 import IntentParser from './intent-parser';
 
 const p = Object.freeze({
@@ -10,6 +11,7 @@ const p = Object.freeze({
   wakewordRecogniser: Symbol('wakewordRecogniser'),
   wakewordModelUrl: Symbol('wakewordModelUrl'),
   speechRecogniser: Symbol('speechRecogniser'),
+  speechSynthesis: Symbol('speechSynthesis'),
   idle: Symbol('idle'),
 
   // Methods
@@ -47,21 +49,18 @@ export default class SpeechController extends EventDispatcher {
     super(EVENT_INTERFACE);
 
     this[p.idle] = true;
+    this[p.wakewordModelUrl] = 'data/wakeword_model.json';
 
-    const wakeWordRecogniser = new WakeWordRecogniser();
-    const speechRecogniser = new SpeechRecogniser();
+    this[p.speechRecogniser] = new SpeechRecogniser();
+    this[p.speechSynthesis] = new SpeechSynthesis();
     this[p.intentParser] = new IntentParser();
+    this[p.wakewordRecogniser] = new WakeWordRecogniser();
 
-    wakeWordRecogniser.setOnKeywordSpottedCallback(() => {
+    this[p.wakewordRecogniser].setOnKeywordSpottedCallback(() => {
       this.emit(EVENT_INTERFACE[2], { type: EVENT_INTERFACE[2] });
 
       this.startSpeechRecognition();
     });
-
-    this[p.wakewordRecogniser] = wakeWordRecogniser;
-    this[p.wakewordModelUrl] = 'data/wakeword_model.json';
-
-    this[p.speechRecogniser] = speechRecogniser;
 
     Object.seal(this);
   }
@@ -91,6 +90,15 @@ export default class SpeechController extends EventDispatcher {
   stopSpeechRecognition() {
     return this[p.speechRecogniser].abort()
       .then(this[p.startListeningForWakeword].bind(this));
+  }
+
+  /**
+   * Speak a text aloud.
+   *
+   * @param {string} text
+   */
+  speak(text = '') {
+    return this[p.speechSynthesis].speak(text);
   }
 
   [p.initialiseSpeechRecognition]() {
