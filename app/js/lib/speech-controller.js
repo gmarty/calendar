@@ -55,7 +55,6 @@ export default class SpeechController extends EventDispatcher {
     this[p.speechSynthesis] = new SpeechSynthesis();
     this[p.wakewordRecogniser] = new WakeWordRecogniser();
     this[p.intentParser] = new IntentParser();
-    
 
     this[p.wakewordRecogniser].setOnKeywordSpottedCallback(() => {
       this.emit(EVENT_INTERFACE[2], { type: EVENT_INTERFACE[2] });
