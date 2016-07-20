@@ -14,8 +14,6 @@ dayPeriodsParser.extract = (text, ref, match) => {
   let hour;
   let meridiem;
 
-
-
   switch (match[0].toLowerCase()) {
     case 'midnight':
       hour = 0;
