@@ -106,6 +106,8 @@ export default class Reminders extends React.Component {
         // @todo Add some feedback and remove the reminder from the list:
         // https://github.com/fxbox/calendar/issues/24
         console.error('Saving the reminder failed.', res);
+        this.speechController.speak('This reminder could not be saved. ' +
+          'Please try again later.');
       });
   }
 
