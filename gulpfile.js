@@ -20,7 +20,7 @@ const merge = require('merge2');
 const rollup = require('gulp-rollup');
 const rollupBabelPlugin = require('rollup-plugin-babel');
 const rollupIncludePathsPlugin = require('rollup-plugin-includepaths');
-const rollupUglifyPlugin = require('rollup-plugin-uglify');
+//const rollupUglifyPlugin = require('rollup-plugin-uglify');
 const minifier = require('gulp-uglify/minifier');
 const uglifyjs = require('uglify-js');
 const postcss = require('gulp-postcss');
@@ -38,6 +38,17 @@ const DOC_ROOT = './doc/';
 const DIST_ROOT = './dist/';
 const DIST_APP_ROOT = './dist/app/';
 const DIST_TESTS_ROOT = './dist/tests/';
+
+const EXTERNAL = [
+  'components/react',
+  'components/react-dom',
+  'components/lodash',
+  'components/moment',
+  'components/cldr/en',
+  'components/cldr/core',
+  'components/jsspeechrecognizer',
+  'components/chrono',
+];
 
 let webserverStream;
 let foxboxSimulator;
@@ -59,7 +70,7 @@ gulp.task('lint', () => {
     gulp
       .src('app/**/*.css')
       .pipe(
-        stylelint({ reporters: [{ formatter: 'verbose', console: true }] })
+        stylelint({ reporters: [{ formatter: 'string', console: true }] })
       )
   );
 });
@@ -156,7 +167,7 @@ gulp.task('compile-app-dev', () => {
       rollup({
         sourceMap: true,
         format: 'amd',
-        external: ['components/react', 'components/react-dom'],
+        external: EXTERNAL,
         plugins: [
           rollupBabelPlugin(),
           rollupIncludePathsPlugin({ extensions: ['.js', '.jsx'] }),
@@ -176,17 +187,16 @@ gulp.task('compile-app-production', ['compress-external-modules'], () => {
     .src(`${APP_ROOT}js/*.js`)
     .pipe(
       rollup({
-        sourceMap: true,
+        sourceMap: false,
         format: 'amd',
-        external: ['components/react', 'components/react-dom'],
+        external: EXTERNAL,
         plugins: [
           rollupBabelPlugin(),
-          rollupUglifyPlugin({ sourceMap: true }, uglifyjs.minifier),
+          //rollupUglifyPlugin({ sourceMap: false }, uglifyjs.minifier),
           rollupIncludePathsPlugin({ extensions: ['.js', '.jsx'] }),
         ],
       })
     )
-    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(`${DIST_APP_ROOT}js`));
 });
 
