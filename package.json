@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fxbox/app.git"
+    "url": "git+https://github.com/fxbox/calendar.git"
   },
   "scripts": {
     "build": "gulp build-dev",
@@ -18,7 +18,14 @@
     "iot"
   ],
   "author": "",
-  "license": "MPL2",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/fxbox/calendar/issues"
+  },
+  "homepage": "https://github.com/fxbox/calendar#readme",
+  "directories": {
+    "test": "tests"
+  },
   "dependencies": {
     "alameda": "^1.0.0",
     "chrono-node": "^1.2.3",
