@@ -8,7 +8,7 @@
 html {
   height: 100%;
 
-  font: 400 10px/10px Arial;
+  font: 400 10px/10px 'Fira Sans', Arial, sans-serif;
 }
 
 body {
@@ -24,7 +24,7 @@ body,
 input,
 button,
 select {
-  font: 300 1.1rem/2.2rem 'Fira Sans', Arial;
+  font: 300 1.1rem/2.2rem 'Fira Sans', Arial, sans-serif;
 }
 
 h1,
@@ -74,27 +74,27 @@ button {
 /* Small devices (landscape phones, 34em and up) */
 @media (min-width: 34em) {
   html {
-    font: 400 11px/11px Arial;
+    font: 400 11px/11px 'Fira Sans', Arial, sans-serif;
   }
 }
 
 /* Medium devices (tablets, 48em and up) */
 @media (min-width: 48em) {
   html {
-    font: 400 12px/12px Arial;
+    font: 400 12px/12px 'Fira Sans', Arial, sans-serif;
   }
 }
 
 /* Large devices (desktops, 62em and up) */
 @media (min-width: 62em) {
   html {
-    font: 400 13px/13px Arial;
+    font: 400 13px/13px 'Fira Sans', Arial, sans-serif;
   }
 }
 
 /* Extra large devices (large desktops, 75em and up) */
 @media (min-width: 75em) {
   html {
-    font: 400 14px/14px Arial;
+    font: 400 14px/14px 'Fira Sans', Arial, sans-serif;
   }
 }
