@@ -1,5 +1,3 @@
-'use strict';
-
 const p = Object.freeze({
   isListening: Symbol('isListening'),
   recognition: Symbol('recognition'),

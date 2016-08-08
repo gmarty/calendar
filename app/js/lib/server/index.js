@@ -1,7 +1,5 @@
 /* global URLSearchParams */
 
-'use strict';
-
 import EventDispatcher from '../common/event-dispatcher';
 import Settings from '../common/settings';
 

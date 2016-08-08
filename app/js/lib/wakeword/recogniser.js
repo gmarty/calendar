@@ -1,5 +1,3 @@
-'use strict';
-
 import PocketSphinx from 'components/webaudiokws';
 
 export default class WakeWordRecogniser {

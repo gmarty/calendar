@@ -1,5 +1,3 @@
-'use strict';
-
 /*
  * This file provides an helper to add custom events to any object.
  *

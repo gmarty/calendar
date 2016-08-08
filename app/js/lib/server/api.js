@@ -1,5 +1,3 @@
-'use strict';
-
 const p = Object.freeze({
   settings: Symbol('settings'),
   net: Symbol('net'),

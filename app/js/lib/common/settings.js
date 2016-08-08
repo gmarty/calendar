@@ -1,5 +1,3 @@
-'use strict';
-
 import EventDispatcher from '../common/event-dispatcher';
 
 // Prefix all entries to avoid collisions.
