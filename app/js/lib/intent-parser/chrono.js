@@ -1,5 +1,3 @@
-'use strict';
-
 import chrono from 'components/chrono';
 
 /**

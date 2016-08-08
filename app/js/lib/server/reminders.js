@@ -1,5 +1,3 @@
-'use strict';
-
 const p = Object.freeze({
   api: Symbol('api'),
   settings: Symbol('settings'),

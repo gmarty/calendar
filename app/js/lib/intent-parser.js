@@ -1,5 +1,3 @@
-'use strict';
-
 import Confirmation from './intent-parser/confirmation';
 import chrono from './intent-parser/chrono';
 

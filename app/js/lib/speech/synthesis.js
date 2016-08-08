@@ -1,5 +1,3 @@
-'use strict';
-
 const p = Object.freeze({
   // Properties
   synthesis: Symbol('synthesis'),

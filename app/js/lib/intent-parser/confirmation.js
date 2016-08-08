@@ -1,7 +1,5 @@
 /* global TwitterCldr, TwitterCldrDataBundle */
 
-'use strict';
-
 import moment from 'components/moment';
 import 'components/cldr/en';
 import 'components/cldr/core';
