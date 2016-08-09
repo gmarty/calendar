@@ -1,5 +1,5 @@
 import moment from 'components/moment';
-import IntentParser from 'js/lib/intent-parser';
+import IntentParser from 'js/lib/intent-parser/index';
 
 describe('intent-parser', function() {
   describe('Properly parses expected reminder sentences', function() {

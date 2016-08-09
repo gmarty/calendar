@@ -1,5 +1,5 @@
-import Confirmation from './intent-parser/confirmation';
-import chrono from './intent-parser/chrono';
+import ReminderConfirmation from './reminder-confirmation';
+import chrono from './chrono';
 
 /*
 Examples of supported phrases:
@@ -109,30 +109,30 @@ const PATTERNS = {
   },
 };
 
-export default class IntentParser {
+export default class ReminderParser {
   constructor(locale = 'en') {
     this.locale = locale;
-    this[p.confirmation] = new Confirmation(locale);
+    this[p.confirmation] = new ReminderConfirmation(locale);
     this[p.patterns] = {};
 
     this[p.init]();
-
-    window.intentParser = this;
 
     Object.seal(this);
   }
 
   parse(phrase = '') {
-    if (!phrase) {
-      return Promise.reject('Empty string.');
-    }
-
     return new Promise((resolve, reject) => {
+      if (!phrase) {
+        console.error('Empty string.');
+        return reject(null);
+      }
+
       phrase = this[p.normalise](phrase);
       const { due, processedPhrase } = this[p.parseDatetime](phrase);
 
       if (!due) {
-        return reject('Time could not be parsed.');
+        console.error('Time could not be parsed.');
+        return reject(null);
       }
 
       const successful = this[p.patterns][this.locale].some((pattern) => {
@@ -165,7 +165,8 @@ export default class IntentParser {
       });
 
       if (!successful) {
-        return reject('Unsupported intent format.');
+        console.error('Unsupported intent format.');
+        return reject(null);
       }
     });
   }

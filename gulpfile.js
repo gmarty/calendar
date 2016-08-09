@@ -48,6 +48,7 @@ const EXTERNAL = [
   'components/cldr/core',
   'components/jsspeechrecognizer',
   'components/chrono',
+  'components/webaudiokws',
 ];
 
 let webserverStream;
