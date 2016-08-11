@@ -2,7 +2,7 @@ import EventDispatcher from './common/event-dispatcher';
 import WakeWordRecogniser from './wakeword/recogniser';
 import SpeechRecogniser from './speech/recogniser';
 import SpeechSynthesis from './speech/synthesis';
-import IntentParser from './intent-parser';
+import IntentParser from './intent-parser/index';
 
 const p = Object.freeze({
   // Properties
