@@ -12,7 +12,7 @@ const p = Object.freeze({
   server: Symbol('server'),
   subscribeToNotifications: Symbol('subscribeToNotifications'),
   settings: Symbol('settings'),
-  initVoiced: Symbol('initVoiced'),
+  initHub: Symbol('initHub'),
 
   onHashChanged: Symbol('onHashChanged'),
 });
@@ -25,7 +25,7 @@ export default class MainController extends BaseController {
     const speechController = new SpeechController();
     const settings = new Settings();
     const server = new Server({ settings });
-    const options = { mountNode, speechController, server };
+    const options = { mountNode, speechController, server, settings };
 
     const usersController = new UsersController(options);
     const remindersController = new RemindersController(options);
@@ -39,7 +39,7 @@ export default class MainController extends BaseController {
     this[p.speechController] = speechController;
     this[p.server] = server;
     this[p.settings] = settings;
-    this[p.initVoiced]();
+    this[p.initHub]();
 
     window.addEventListener('hashchange', this[p.onHashChanged].bind(this));
   }
@@ -59,7 +59,7 @@ export default class MainController extends BaseController {
 
     this[p.server].on('login', () => this[p.subscribeToNotifications]());
     this[p.server].on('push-message', (message) => {
-      if (this[p.settings].voiced) {
+      if (this[p.settings].isHub) {
         this[p.speechController].speak(`${message.title}: ${message.body}`);
       }
     });
@@ -108,7 +108,7 @@ export default class MainController extends BaseController {
       }
     }
 
-    this[p.initVoiced]();
+    this[p.initHub]();
   }
 
   [p.subscribeToNotifications]() {
@@ -119,22 +119,26 @@ export default class MainController extends BaseController {
   }
 
   /**
-   * Will init the `voiced` property, which controls whether a notification is
-   * spoken.
+   * Will init the `isHub` property, which controls whether the device is
+   * a group/family device or a member's personal device.
    *
    * This works by using a specific hash while loading or running the
    * application.
-   * Recognized syntaxes are: voiced=1/true/0/false
+   * Recognised syntaxes are: #hub=1/true/0/false
    */
-  [p.initVoiced]() {
-    const forcedMatch = location.hash.match(/\bvoiced=(.+?)(&|$)/);
+  [p.initHub]() {
+    const match = location.hash.match(/\bhub=(.+)(&|$)/);
 
-    if (forcedMatch) {
-      const matchedValue = forcedMatch[1];
-      const forceVoiced = matchedValue === '1' || matchedValue === 'true';
+    if (match) {
+      const matchedValue = match[1];
+      const isHub = matchedValue === '1' || matchedValue === 'true';
 
-      console.log('Forcing the `voiced` property to ', forceVoiced);
-      this[p.settings].voiced = forceVoiced;
+      console.log('Setting the `isHub` property to ', isHub);
+      this[p.settings].isHub = isHub;
+
+      // Redirect to the root of the application.
+      location.hash = '';
+      location.reload();
     }
   }
 }
