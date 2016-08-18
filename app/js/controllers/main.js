@@ -47,8 +47,8 @@ export default class MainController extends BaseController {
   main() {
     if (screen && 'orientation' in screen && 'lock' in screen.orientation) {
       screen.orientation.lock('landscape')
-        .catch((e) => {
-          console.error(e);
+        .catch(() => {
+          // Don't panic. We're probably just on desktop.
         });
     }
 
