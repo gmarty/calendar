@@ -41,6 +41,22 @@ export default class Reminders {
   }
 
   /**
+   * Create a new reminder.
+   *
+   * @param {Object} body
+   * @return {Promise}
+   */
+  update(body) {
+    const id = body.id;
+
+    if (isNaN(id) || typeof id !== 'number') {
+      return Promise.reject(new Error('The reminder id is not a number.'));
+    }
+
+    return this[p.api].put(`reminders/${id}`, body);
+  }
+
+  /**
    * Delete a reminder given its ID.
    *
    * @param {string} id The ID of the reminder to delete.

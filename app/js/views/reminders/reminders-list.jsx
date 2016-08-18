@@ -3,6 +3,7 @@ import _ from 'components/lodash';
 import moment from 'components/moment';
 
 import ReminderItem from './reminder-item';
+import EditDialog from './edit-dialog';
 
 export default class RemindersList extends React.Component {
   constructor(props) {
@@ -13,10 +14,19 @@ export default class RemindersList extends React.Component {
     };
 
     this.server = props.server;
+    this.refreshReminders = props.refreshReminders;
+
+    this.editDialog = null;
   }
 
   componentWillReceiveProps(props) {
     this.setState({ reminders: props.reminders });
+  }
+
+  onEdit(id) {
+    const reminder = this.state.reminders
+      .find((reminder) => reminder.id === id);
+    this.editDialog.show(reminder);
   }
 
   onDelete(id) {
@@ -80,6 +90,7 @@ export default class RemindersList extends React.Component {
                       key={reminder.id}
                       reminder={reminder}
                       onDelete={this.onDelete.bind(this, reminder.id)}
+                      onEdit={this.onEdit.bind(this, reminder.id)}
                     />);
                   })}
                 </ol>
@@ -93,6 +104,9 @@ export default class RemindersList extends React.Component {
     return (
       <div>
         {remindersNode}
+        <EditDialog server={this.server}
+                    refreshReminders={this.refreshReminders}
+                    ref={(t) => this.editDialog = t}/>
       </div>
     );
   }
@@ -101,4 +115,5 @@ export default class RemindersList extends React.Component {
 RemindersList.propTypes = {
   server: React.PropTypes.object.isRequired,
   reminders: React.PropTypes.array.isRequired,
+  refreshReminders: React.PropTypes.func.isRequired,
 };
