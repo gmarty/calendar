@@ -16,6 +16,7 @@ export default class ReminderItem extends React.Component {
     this.listFormatter = new TwitterCldr.ListFormatter();
     this.reminder = props.reminder;
     this.onDelete = props.onDelete;
+    this.onEdit = props.onEdit;
   }
 
   getColour(recipients = []) {
@@ -55,7 +56,11 @@ export default class ReminderItem extends React.Component {
           </h3>
           <p className="reminders__item-text">
             {reminder.action}
-            <button className="reminders__delete"
+            <button className="reminders__button reminders__edit"
+                    onClick={this.onEdit}>
+              Edit
+            </button>
+            <button className="reminders__button reminders__delete"
                     onClick={this.onDelete}>
               Delete
             </button>
@@ -69,4 +74,5 @@ export default class ReminderItem extends React.Component {
 ReminderItem.propTypes = {
   reminder: React.PropTypes.object.isRequired,
   onDelete: React.PropTypes.func.isRequired,
+  onEdit: React.PropTypes.func.isRequired,
 };

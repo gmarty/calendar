@@ -1,6 +1,7 @@
 @import 'FiraSans/font.css';
 @import 'views/user-login.css';
 @import 'views/reminders.css';
+@import 'views/edit-dialog.css';
 @import 'views/microphone.css';
 @import 'views/toaster.css';
 
@@ -15,20 +16,26 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
   background: #fff;
   background: linear-gradient(#fff, hsla(178, 87%, 35%, 1)) fixed;
 }
 
 body,
 input,
+textarea,
 button,
 select {
   font: 300 1.1rem/2.2rem 'Fira Sans', Arial, sans-serif;
 }
 
 h1,
-h2 {
+h2,
+h3,
+h4 {
   margin: 0;
   font-weight: 300;
 }
@@ -41,6 +48,14 @@ h1 {
 h2 {
   padding: 1rem 3rem 0;
   font-size: 2.6rem;
+}
+
+h3 {
+  font-size: 2.2rem;
+}
+
+h4 {
+  font-size: 1.4rem;
 }
 
 ul {

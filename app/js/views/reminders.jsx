@@ -20,15 +20,13 @@ export default class Reminders extends React.Component {
     this.onReminder = this.onReminder.bind(this);
     this.onParsingFailure = this.onParsingFailure.bind(this);
     this.onWebPushMessage = this.onWebPushMessage.bind(this);
+    this.refreshReminders = this.refreshReminders.bind(this);
 
     moment.locale(navigator.languages || navigator.language || 'en-US');
   }
 
   componentDidMount() {
-    this.server.reminders.getAll()
-      .then((reminders) => {
-        this.setState({ reminders });
-      });
+    this.refreshReminders();
 
     // Refresh the page every 5 minutes if idle.
     this.refreshInterval = setInterval(() => {
@@ -69,6 +67,13 @@ export default class Reminders extends React.Component {
     }
 
     console.log(evt.type);
+  }
+
+  refreshReminders() {
+    this.server.reminders.getAll()
+      .then((reminders) => {
+        this.setState({ reminders });
+      });
   }
 
   onReminder(evt) {
@@ -124,7 +129,8 @@ export default class Reminders extends React.Component {
       <section className="reminders">
         <Toaster ref={(t) => this.toaster = t}/>
         <RemindersList reminders={this.state.reminders}
-                       server={this.server}/>
+                       server={this.server}
+                       refreshReminders={this.refreshReminders}/>
       </section>
     );
   }
