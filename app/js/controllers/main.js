@@ -45,13 +45,6 @@ export default class MainController extends BaseController {
   }
 
   main() {
-    if (screen && 'orientation' in screen && 'lock' in screen.orientation) {
-      screen.orientation.lock('landscape')
-        .catch(() => {
-          // Don't panic. We're probably just on desktop.
-        });
-    }
-
     this[p.speechController].start()
       .then(() => {
         console.log('Speech controller started');

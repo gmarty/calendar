@@ -152,7 +152,7 @@
 /* Medium devices (tablets, 48em and up) */
 @media (min-width: 48em) {
   .reminders {
-    margin: 1rem auto 0;
+    margin: 0 auto;
     padding: 3rem 3rem 0;
   }
 }
@@ -161,7 +161,7 @@
 @media (min-width: 62em) {
   .reminders {
     max-width: 72rem;
-    margin: 3rem auto 0;
+    margin: 0 auto;
     padding: 5rem 5rem 0;
   }
 }
@@ -170,7 +170,7 @@
 @media (min-width: 75em) {
   .reminders {
     max-width: 72rem;
-    margin: 5rem auto 0;
+    margin: 0 auto;
     padding: 5rem 5rem 0;
   }
 }

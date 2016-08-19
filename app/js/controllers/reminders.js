@@ -5,6 +5,7 @@ import BaseController from './base';
 
 import Reminders from '../views/reminders';
 import Microphone from '../views/microphone';
+import FullScreen from '../views/full-screen';
 
 export default class RemindersController extends BaseController {
   main() {
@@ -20,6 +21,10 @@ export default class RemindersController extends BaseController {
         speechController: this.speechController,
         server: this.server,
       }), document.querySelector('.microphone')
+    );
+
+    ReactDOM.render(
+      React.createElement(FullScreen), document.querySelector('.full-screen')
     );
   }
 }
