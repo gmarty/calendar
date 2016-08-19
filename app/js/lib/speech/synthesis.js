@@ -47,7 +47,7 @@ export default class SpeechSynthesis {
       // Use a preferred voice if available.
       utterance.voice = this[p.preferredVoice];
     }
-    utterance.lang = 'en';
+    utterance.lang = 'en-GB';
     utterance.pitch = VOICE_PITCH;
     utterance.rate = VOICE_RATE;
 
@@ -70,7 +70,8 @@ export default class SpeechSynthesis {
     }
 
     const englishVoices = voices
-      .filter((voice) => voice.lang === 'en' || voice.lang.startsWith('en-'));
+      .filter((voice) => voice.lang === 'en' ||
+      voice.lang.startsWith('en-') || voice.lang.startsWith('en_'));
 
     const femaleVoices = englishVoices
       .filter((voice) => voice.name.includes('Female'));
