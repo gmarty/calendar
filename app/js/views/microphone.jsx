@@ -10,14 +10,14 @@ export default class Microphone extends React.Component {
 
     this.speechController = props.speechController;
     this.server = props.server;
-    this.bleep = new Audio();
+    this.audioCtx = new window.AudioContext();
+    this.audioBuffer = null;
+    this.bufferSource = null;
 
-    this.bleep.src = 'media/cue.wav';
+    this.loadAudio();
 
     this.speechController.on('wakeheard', () => {
-      this.bleep.pause();
-      this.bleep.currentTime = 0;
-      this.bleep.play();
+      this.playBleep();
       this.setState({ isListening: true });
     });
     this.speechController.on('speechrecognitionstop', () => {
@@ -27,17 +27,53 @@ export default class Microphone extends React.Component {
     this.click = this.click.bind(this);
   }
 
+  loadAudio() {
+    fetch('media/cue.wav')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(res.status);
+        }
+
+        return res.arrayBuffer();
+      })
+      .then((arrayBuffer) => {
+        this.audioCtx.decodeAudioData(arrayBuffer, (buffer) => {
+          this.audioBuffer = buffer;
+        }, (err) => {
+          console.error('The audio buffer could not be decoded.', err);
+        });
+      });
+  }
+
+  playBleep() {
+    if (!this.audioBuffer) {
+      return;
+    }
+
+    this.bufferSource = this.audioCtx.createBufferSource();
+    this.bufferSource.buffer = this.audioBuffer;
+    this.bufferSource.connect(this.audioCtx.destination);
+    this.bufferSource.start(0);
+  }
+
+  stopBleep() {
+    if (!this.bufferSource) {
+      return;
+    }
+
+    this.bufferSource.stop(0);
+    this.bufferSource = null;
+  }
+
   click() {
     if (!this.state.isListening) {
-      this.bleep.pause();
-      this.bleep.currentTime = 0;
-      this.bleep.play();
+      this.playBleep();
       this.setState({ isListening: true });
       this.speechController.startSpeechRecognition();
       return;
     }
 
-    this.bleep.pause();
+    this.stopBleep();
     this.setState({ isListening: false });
     this.speechController.stopSpeechRecognition();
   }
