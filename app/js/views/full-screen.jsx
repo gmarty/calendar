@@ -4,22 +4,64 @@ export default class FullScreen extends React.Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      isFullScreen: false,
+    };
+
     this.fullScreenEnabled =
       (document.fullscreenEnabled ||
       document.mozFullscreenEnabled || document.mozFullScreenEnabled ||
       document.webkitFullscreenEnabled || document.msFullscreenEnabled);
 
+    this.onFullScreenChange = this.onFullScreenChange.bind(this);
     this.onFullScreen = this.onFullScreen.bind(this);
   }
 
-  get isFullScreen() {
-    return !!document.fullscreenElement ||
+  componentDidMount() {
+    [
+      'fullscreenchange',
+      'mozfullscreenchange',
+      'webkitfullscreenchange',
+      'MSFullscreenChange',
+    ].forEach((type) => {
+      document.addEventListener(type, this.onFullScreenChange);
+    });
+  }
+
+  componentWillUnmount() {
+    [
+      'fullscreenchange',
+      'mozfullscreenchange',
+      'webkitfullscreenchange',
+      'MSFullscreenChange',
+    ].forEach((type) => {
+      document.removeEventListener(type, this.onFullScreenChange);
+    });
+  }
+
+  onFullScreenChange() {
+    const isFullScreen = !!
+      (document.fullscreenElement ||
       document.mozFullScreenElement || document.webkitFullscreenElement ||
-      document.msFullscreenElement;
+      document.msFullscreenElement);
+
+    this.setState({ isFullScreen });
+
+    if (!isFullScreen) {
+      return;
+    }
+
+    // If we're in fullscreen mode, let's try to lock the orientation.
+    if (screen && 'orientation' in screen && 'lock' in screen.orientation) {
+      screen.orientation.lock('landscape')
+        .catch(() => {
+          // Don't panic. We're probably just on desktop.
+        });
+    }
   }
 
   onFullScreen() {
-    if (this.isFullScreen) {
+    if (this.state.isFullScreen) {
       return;
     }
 
@@ -36,31 +78,10 @@ export default class FullScreen extends React.Component {
     } else if (target.webkitRequestFullscreen) {
       target.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
     }
-
-    [
-      'fullscreenchange',
-      'mozfullscreenchange',
-      'webkitfullscreenchange',
-      'MSFullscreenChange',
-    ].forEach((type) => {
-      document.addEventListener(type, () => {
-        if (!this.isFullScreen) {
-          return;
-        }
-
-        // If we're in fullscreen mode, let's try to lock the orientation.
-        if (screen && 'orientation' in screen && 'lock' in screen.orientation) {
-          screen.orientation.lock('landscape')
-            .catch(() => {
-              // Don't panic. We're probably just on desktop.
-            });
-        }
-      });
-    });
   }
 
   render() {
-    if (!this.fullScreenEnabled || this.isFullScreen) {
+    if (!this.fullScreenEnabled || this.state.isFullScreen) {
       return null;
     }
 

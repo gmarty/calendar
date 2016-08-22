@@ -10,21 +10,29 @@ export default class Microphone extends React.Component {
 
     this.speechController = props.speechController;
     this.server = props.server;
+
     this.audioCtx = new window.AudioContext();
     this.audioBuffer = null;
     this.bufferSource = null;
+    this.timeout = null;
 
+    this.onWakeWord = this.onWakeWord.bind(this);
+    this.onSpeechRecognitionEnd = this.onSpeechRecognitionEnd.bind(this);
+    this.onClickMic = this.onClickMic.bind(this);
+  }
+
+  componentDidMount() {
     this.loadAudio();
 
-    this.speechController.on('wakeheard', () => {
-      this.playBleep();
-      this.setState({ isListening: true });
-    });
-    this.speechController.on('speechrecognitionstop', () => {
-      this.setState({ isListening: false });
-    });
+    this.speechController.on('wakeheard', this.onWakeWord);
+    this.speechController.on('speechrecognitionstop',
+      this.onSpeechRecognitionEnd);
+  }
 
-    this.click = this.click.bind(this);
+  componentWillUnmount() {
+    this.speechController.off('wakeheard', this.onWakeWord);
+    this.speechController.off('speechrecognitionstop',
+      this.onSpeechRecognitionEnd);
   }
 
   loadAudio() {
@@ -65,14 +73,29 @@ export default class Microphone extends React.Component {
     this.bufferSource = null;
   }
 
-  click() {
+  onWakeWord() {
+    this.playBleep();
+    this.setState({ isListening: true });
+  }
+
+  onSpeechRecognitionEnd() {
+    this.stopBleep();
+    this.setState({ isListening: false });
+  }
+
+  onClickMic() {
     if (!this.state.isListening) {
       this.playBleep();
       this.setState({ isListening: true });
-      this.speechController.startSpeechRecognition();
+      this.timeout = setTimeout(() => {
+        // When the sound finished playing
+        this.stopBleep();
+        this.speechController.startSpeechRecognition();
+      }, 1000);
       return;
     }
 
+    clearTimeout(this.timeout);
     this.stopBleep();
     this.setState({ isListening: false });
     this.speechController.stopSpeechRecognition();
@@ -86,7 +109,7 @@ export default class Microphone extends React.Component {
     const className = this.state.isListening ? 'listening' : '';
 
     return (
-      <div className={className} onClick={this.click}>
+      <div className={className} onClick={this.onClickMic}>
         <div className="microphone__background"></div>
         <img className="microphone__icon" src="css/icons/microphone.svg"/>
       </div>

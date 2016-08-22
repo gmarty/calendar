@@ -14,6 +14,7 @@ export default class Reminders extends React.Component {
 
     this.speechController = props.speechController;
     this.server = props.server;
+
     this.refreshInterval = null;
     this.toaster = null;
     this.debugEvent = this.debugEvent.bind(this);
@@ -21,6 +22,7 @@ export default class Reminders extends React.Component {
     this.onParsingFailure = this.onParsingFailure.bind(this);
     this.onWebPushMessage = this.onWebPushMessage.bind(this);
     this.refreshReminders = this.refreshReminders.bind(this);
+    this.addReminder = this.addReminder.bind(this);
 
     moment.locale(navigator.languages || navigator.language || 'en-US');
   }
@@ -76,6 +78,13 @@ export default class Reminders extends React.Component {
       });
   }
 
+  addReminder(reminder) {
+    const reminders = this.state.reminders;
+    reminders.push(reminder);
+
+    this.setState({ reminders });
+  }
+
   onReminder(evt) {
     const { recipients, action, due, confirmation } = evt.result;
 
@@ -88,27 +97,33 @@ export default class Reminders extends React.Component {
         due,
       })
       .then((reminder) => {
-        const reminders = this.state.reminders;
-        reminders.push(reminder);
-
-        this.setState({ reminders });
+        this.addReminder(reminder);
 
         this.toaster.success(confirmation);
-        this.speechController.speak(confirmation);
+        this.speechController.speak(confirmation)
+          .then(() => {
+            this.toaster.hide();
+          });
       })
       .catch((res) => {
         console.error('Saving the reminder failed.', res);
         const message = 'This reminder could not be saved. ' +
           'Please try again later.';
         this.toaster.warning(message);
-        this.speechController.speak(message);
+        this.speechController.speak(message)
+          .then(() => {
+            this.toaster.hide();
+          });
       });
   }
 
   onParsingFailure() {
     const message = 'I did not understand that. Can you repeat?';
     this.toaster.warning(message);
-    this.speechController.speak(message);
+    this.speechController.speak(message)
+      .then(() => {
+        this.toaster.hide();
+      });
   }
 
   onWebPushMessage(message) {
