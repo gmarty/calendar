@@ -94,9 +94,10 @@ export default class SpeechController extends EventDispatcher {
    * Speak a text aloud.
    *
    * @param {string} text
+   * @return {Promise} A promise that resolves when the utterance is finished.
    */
   speak(text = '') {
-    this[p.speechSynthesis].speak(text);
+    return this[p.speechSynthesis].speak(text);
   }
 
   [p.startListeningForWakeword]() {

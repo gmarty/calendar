@@ -35,10 +35,11 @@ export default class SpeechSynthesis {
    * Speak a text aloud.
    *
    * @param {string} text
+   * @return {Promise} A promise that resolves when the utterance is finished.
    */
   speak(text = '') {
     if (!text) {
-      return;
+      return Promise.resolve();
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
@@ -52,6 +53,15 @@ export default class SpeechSynthesis {
     utterance.rate = VOICE_RATE;
 
     this[p.synthesis].speak(utterance);
+
+    return new Promise((resolve, reject) => {
+      utterance.addEventListener('end', () => {
+        resolve();
+      });
+      utterance.addEventListener('error', () => {
+        reject();
+      });
+    });
   }
 
   /**
