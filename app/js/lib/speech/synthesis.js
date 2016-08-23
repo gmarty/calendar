@@ -38,29 +38,28 @@ export default class SpeechSynthesis {
    * @return {Promise} A promise that resolves when the utterance is finished.
    */
   speak(text = '') {
-    if (!text) {
-      return Promise.resolve();
-    }
-
-    const utterance = new SpeechSynthesisUtterance(text);
-
-    if (this[p.preferredVoice]) {
-      // Use a preferred voice if available.
-      utterance.voice = this[p.preferredVoice];
-    }
-    utterance.lang = 'en-GB';
-    utterance.pitch = VOICE_PITCH;
-    utterance.rate = VOICE_RATE;
-
-    this[p.synthesis].speak(utterance);
-
     return new Promise((resolve, reject) => {
-      utterance.addEventListener('end', () => {
+      if (!text) {
+        return resolve();
+      }
+
+      const utterance = new SpeechSynthesisUtterance(text);
+
+      if (this[p.preferredVoice]) {
+        // Use a preferred voice if available.
+        utterance.voice = this[p.preferredVoice];
+      }
+      utterance.lang = 'en-GB';
+      utterance.pitch = VOICE_PITCH;
+      utterance.rate = VOICE_RATE;
+      utterance.onend = () => {
         resolve();
-      });
-      utterance.addEventListener('error', () => {
+      };
+      utterance.onerror = () => {
         reject();
-      });
+      };
+
+      this[p.synthesis].speak(utterance);
     });
   }
 

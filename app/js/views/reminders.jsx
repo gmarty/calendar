@@ -2,6 +2,7 @@ import React from 'components/react';
 import moment from 'components/moment';
 
 import Toaster from './toaster';
+import Microphone from '../views/microphone';
 import RemindersList from './reminders/reminders-list';
 
 export default class Reminders extends React.Component {
@@ -17,7 +18,9 @@ export default class Reminders extends React.Component {
 
     this.refreshInterval = null;
     this.toaster = null;
+    this.microphone = null;
     this.debugEvent = this.debugEvent.bind(this);
+    this.onWakeWord = this.onWakeWord.bind(this);
     this.onReminder = this.onReminder.bind(this);
     this.onParsingFailure = this.onParsingFailure.bind(this);
     this.onWebPushMessage = this.onWebPushMessage.bind(this);
@@ -28,7 +31,10 @@ export default class Reminders extends React.Component {
   }
 
   componentDidMount() {
-    this.refreshReminders();
+    this.refreshReminders()
+      .then(() => {
+        console.log('Reminders loaded');
+      });
 
     // Refresh the page every 5 minutes if idle.
     this.refreshInterval = setInterval(() => {
@@ -43,6 +49,8 @@ export default class Reminders extends React.Component {
     this.speechController.on('speechrecognitionstart', this.debugEvent);
     this.speechController.on('speechrecognitionstop', this.debugEvent);
     this.speechController.on('reminder', this.debugEvent);
+
+    this.speechController.on('wakeheard', this.onWakeWord);
     this.speechController.on('reminder', this.onReminder);
     this.speechController.on('parsing-failed', this.onParsingFailure);
     this.server.on('push-message', this.onWebPushMessage);
@@ -57,6 +65,8 @@ export default class Reminders extends React.Component {
     this.speechController.off('speechrecognitionstart', this.debugEvent);
     this.speechController.off('speechrecognitionstop', this.debugEvent);
     this.speechController.off('reminder', this.debugEvent);
+
+    this.speechController.off('wakeheard', this.onWakeWord);
     this.speechController.off('reminder', this.onReminder);
     this.speechController.off('parsing-failed', this.onParsingFailure);
     this.server.off('push-message', this.onWebPushMessage);
@@ -72,7 +82,8 @@ export default class Reminders extends React.Component {
   }
 
   refreshReminders() {
-    this.server.reminders.getAll()
+    // @todo Add a loader.
+    return this.server.reminders.getAll()
       .then((reminders) => {
         this.setState({ reminders });
       });
@@ -85,8 +96,14 @@ export default class Reminders extends React.Component {
     this.setState({ reminders });
   }
 
+  onWakeWord() {
+    this.microphone.startListeningToSpeech();
+  }
+
   onReminder(evt) {
     const { recipients, action, due, confirmation } = evt.result;
+
+    this.microphone.stopListeningToSpeech();
 
     // @todo Nice to have: optimistic update.
     // https://github.com/fxbox/calendar/issues/32
@@ -102,7 +119,9 @@ export default class Reminders extends React.Component {
         this.toaster.success(confirmation);
         this.speechController.speak(confirmation)
           .then(() => {
+            console.log('Utterance terminated.');
             this.toaster.hide();
+            this.speechController.startListeningForWakeword();
           });
       })
       .catch((res) => {
@@ -113,16 +132,21 @@ export default class Reminders extends React.Component {
         this.speechController.speak(message)
           .then(() => {
             this.toaster.hide();
+            this.speechController.startListeningForWakeword();
           });
       });
   }
 
   onParsingFailure() {
+    this.microphone.stopListeningToSpeech();
+
     const message = 'I did not understand that. Can you repeat?';
     this.toaster.warning(message);
     this.speechController.speak(message)
       .then(() => {
+        console.log('Utterance terminated.');
         this.toaster.hide();
+        this.speechController.startListeningForWakeword();
       });
   }
 
@@ -143,6 +167,11 @@ export default class Reminders extends React.Component {
     return (
       <section className="reminders">
         <Toaster ref={(t) => this.toaster = t}/>
+        <div className="microphone">
+          <Microphone ref={(t) => this.microphone = t}
+                      speechController={this.speechController}
+                      server={this.server}/>
+        </div>
         <RemindersList reminders={this.state.reminders}
                        server={this.server}
                        refreshReminders={this.refreshReminders}/>

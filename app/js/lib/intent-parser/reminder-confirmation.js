@@ -160,16 +160,24 @@ export default class Confirmation {
    */
   [p.formatHoursAndMinutes](date) {
     date = moment(date);
+    let format;
+
     if (date.minute() === 0) {
-      return date.format('h A'); // 7 PM
+      format = date.format('h A'); // 7 PM
     } else if (date.minute() === 15) {
-      return date.format('[quarter past] h A');
+      format = date.format('[quarter past] h A');
     } else if (date.minute() === 30) {
-      return date.format('[half past] h A');
+      format = date.format('[half past] h A');
     } else if (date.minute() === 45) {
       const nextHour = date.add(1, 'hour');
-      return nextHour.format('[quarter to] h A');
+      format = nextHour.format('[quarter to] h A');
+    } else {
+      format = date.format('h m A'); // 6 24 AM
     }
-    return date.format('h m A'); // 6 24 AM
+
+    // Some speech synthesisers pronounce "AM" as in "ham" (not "A. M.").
+    return format
+      .replace(/ AM$/gi, ' A.M.')
+      .replace(/ PM$/gi, ' P.M.');
   }
 }

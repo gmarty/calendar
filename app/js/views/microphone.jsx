@@ -5,7 +5,7 @@ export default class Microphone extends React.Component {
     super(props);
 
     this.state = {
-      isListening: false,
+      isListeningToSpeech: false,
     };
 
     this.speechController = props.speechController;
@@ -16,23 +16,23 @@ export default class Microphone extends React.Component {
     this.bufferSource = null;
     this.timeout = null;
 
-    this.onWakeWord = this.onWakeWord.bind(this);
-    this.onSpeechRecognitionEnd = this.onSpeechRecognitionEnd.bind(this);
+    this.startListeningToSpeech = this.startListeningToSpeech.bind(this);
+    this.stopListeningToSpeech = this.stopListeningToSpeech.bind(this);
     this.onClickMic = this.onClickMic.bind(this);
   }
 
   componentDidMount() {
     this.loadAudio();
 
-    this.speechController.on('wakeheard', this.onWakeWord);
+    //this.speechController.on('wakeheard', this.startListeningToSpeech);
     this.speechController.on('speechrecognitionstop',
-      this.onSpeechRecognitionEnd);
+      this.stopListeningToSpeech);
   }
 
   componentWillUnmount() {
-    this.speechController.off('wakeheard', this.onWakeWord);
+    //this.speechController.off('wakeheard', this.startListeningToSpeech);
     this.speechController.off('speechrecognitionstop',
-      this.onSpeechRecognitionEnd);
+      this.stopListeningToSpeech);
   }
 
   loadAudio() {
@@ -73,20 +73,20 @@ export default class Microphone extends React.Component {
     this.bufferSource = null;
   }
 
-  onWakeWord() {
+  startListeningToSpeech() {
     this.playBleep();
-    this.setState({ isListening: true });
+    this.setState({ isListeningToSpeech: true });
   }
 
-  onSpeechRecognitionEnd() {
+  stopListeningToSpeech() {
     this.stopBleep();
-    this.setState({ isListening: false });
+    this.setState({ isListeningToSpeech: false });
   }
 
   onClickMic() {
-    if (!this.state.isListening) {
+    if (!this.state.isListeningToSpeech) {
       this.playBleep();
-      this.setState({ isListening: true });
+      this.setState({ isListeningToSpeech: true });
       this.timeout = setTimeout(() => {
         // When the sound finished playing
         this.stopBleep();
@@ -97,7 +97,7 @@ export default class Microphone extends React.Component {
 
     clearTimeout(this.timeout);
     this.stopBleep();
-    this.setState({ isListening: false });
+    this.setState({ isListeningToSpeech: false });
     this.speechController.stopSpeechRecognition();
   }
 
@@ -106,7 +106,7 @@ export default class Microphone extends React.Component {
       return null;
     }
 
-    const className = this.state.isListening ? 'listening' : '';
+    const className = this.state.isListeningToSpeech ? 'listening' : '';
 
     return (
       <div className={className} onClick={this.onClickMic}>
