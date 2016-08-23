@@ -12,7 +12,6 @@ const p = Object.freeze({
   idle: Symbol('idle'),
 
   // Methods
-  startListeningForWakeword: Symbol('startListeningForWakeword'),
   stopListeningForWakeword: Symbol('stopListeningForWakeword'),
   listenForUtterance: Symbol('listenForUtterance'),
   handleSpeechRecognitionEnd: Symbol('handleSpeechRecognitionEnd'),
@@ -68,7 +67,7 @@ export default class SpeechController extends EventDispatcher {
   }
 
   start() {
-    return this[p.startListeningForWakeword]();
+    return this.startListeningForWakeword();
   }
 
   startSpeechRecognition() {
@@ -77,17 +76,15 @@ export default class SpeechController extends EventDispatcher {
     return this[p.stopListeningForWakeword]()
       .then(this[p.listenForUtterance].bind(this))
       .then(this[p.handleSpeechRecognitionEnd].bind(this))
-      .then(this[p.startListeningForWakeword].bind(this))
       .catch((err) => {
         console.log('startSpeechRecognition err', err);
         this.emit(EVENT_INTERFACE[4], { type: EVENT_INTERFACE[4] });
-        this[p.startListeningForWakeword]();
       });
   }
 
   stopSpeechRecognition() {
     return this[p.speechRecogniser].abort()
-      .then(this[p.startListeningForWakeword].bind(this));
+      .then(this.startListeningForWakeword.bind(this));
   }
 
   /**
@@ -100,7 +97,7 @@ export default class SpeechController extends EventDispatcher {
     return this[p.speechSynthesis].speak(text);
   }
 
-  [p.startListeningForWakeword]() {
+  startListeningForWakeword() {
     this.emit(EVENT_INTERFACE[0], { type: EVENT_INTERFACE[0] });
     this[p.idle] = true;
 
