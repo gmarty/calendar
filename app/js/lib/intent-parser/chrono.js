@@ -77,10 +77,8 @@ forwardHoursRefiner.refine = (text, results, opt = {}) => {
 
   function changeDate(component, ref) {
     if (!component.isCertain('meridiem')
-      && component.get('year') === ref.getFullYear()
-      && component.get('month') === ref.getMonth() + 1
-      && component.get('day') === ref.getDate()
-      && component.get('hour') < ref.getHours()) {
+      && component.moment(ref).isSame(component, 'day')
+      && component.get('hour') <= ref.getHours()) {
       component.assign('meridiem', 1);
       component.assign('hour', component.get('hour') + 12);
     }
