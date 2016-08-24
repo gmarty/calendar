@@ -106,6 +106,14 @@
   background: #8c0000;
 }
 
+.reminders__item-content.salmon {
+  background: #e9967a;
+}
+
+.reminders__item-content.goldenrod {
+  background: #b8860b;
+}
+
 .reminders__item-content.orange {
   background: #ff8c00;
 }
@@ -114,12 +122,24 @@
   background: #006400;
 }
 
+.reminders__item-content.cyan {
+  background: #008b8b;
+}
+
 .reminders__item-content.blue {
   background: #00008c;
 }
 
 .reminders__item-content.violet {
   background: #8c008c;
+}
+
+.reminders__item-content.slategrey {
+  background: #2f4f4f;
+}
+
+.reminders__item-content.grey {
+  background: #a9a9a9;
 }
 
 .reminders__button {

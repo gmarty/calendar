@@ -5,7 +5,18 @@ import moment from 'components/moment';
 import 'components/cldr/en';
 import 'components/cldr/core';
 
-const COLOURS = ['red', 'orange', 'green', 'blue', 'violet'];
+const COLOURS = [
+  'red',
+  'salmon',
+  'goldenrod',
+  'orange',
+  'green',
+  'cyan',
+  'blue',
+  'violet',
+  'slategrey',
+  'grey',
+];
 
 export default class ReminderItem extends React.Component {
   constructor(props) {
@@ -19,8 +30,7 @@ export default class ReminderItem extends React.Component {
     this.onEdit = props.onEdit;
   }
 
-  getColour(recipients = []) {
-    const name = recipients.join(' ');
+  getColour(name = '') {
     const hash = (string) => {
       let hash = 0, i, chr, len;
       if (string.length === 0) {
@@ -39,9 +49,10 @@ export default class ReminderItem extends React.Component {
 
   render() {
     const reminder = this.reminder;
+    const recipients = this.listFormatter.format(reminder.recipients);
     const contentClassName = [
       'reminders__item-content',
-      this.getColour(reminder.recipients),
+      this.getColour(recipients),
     ]
       .join(' ');
 
@@ -52,7 +63,7 @@ export default class ReminderItem extends React.Component {
         </div>
         <div className={contentClassName}>
           <h3 className="reminders__item-recipient">
-            {this.listFormatter.format(reminder.recipients)}
+            {recipients}
           </h3>
           <p className="reminders__item-text">
             {reminder.action}
