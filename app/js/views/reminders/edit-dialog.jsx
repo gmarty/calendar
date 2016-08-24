@@ -8,7 +8,7 @@ export default class EditDialog extends React.Component {
     this.state = {
       display: false,
       id: null,
-      reminder: null,
+      recipients: null,
       action: null,
       due: null,
     };
@@ -28,6 +28,24 @@ export default class EditDialog extends React.Component {
 
   componentDidMount() {
     window.document.addEventListener('keydown', this.onKeyPress);
+  }
+
+  /**
+   * Circumvent a bug in Chrome for Android (tested in v.52 and v.53) where the
+   * date and time inputs value are not populated via the `value` attribute and
+   * must be set using the `value` property.
+   */
+  componentDidUpdate() {
+    if (!this.dueDateInput || !this.dueTimeInput) {
+      return;
+    }
+
+    const due = this.state.due;
+    const date = moment(due).format('YYYY-MM-DD');
+    const time = moment(due).format('HH:mm');
+
+    this.dueDateInput.value = date;
+    this.dueTimeInput.value = time;
   }
 
   componentWillUnmount() {
@@ -59,11 +77,16 @@ export default class EditDialog extends React.Component {
     const date = this.dueDateInput.value.split('-');
     const time = this.dueTimeInput.value.split(':');
 
-    const dueMoment = moment()
-      .year(date[0]).month(date[1] - 1).date(date[2])
-      .hour(time[0]).minute(time[1]).second(0);
-    const due = Number(dueMoment.toDate());
-    this.setState({ due });
+    try {
+      const dueMoment = moment()
+        .year(date[0]).month(date[1] - 1).date(date[2])
+        .hour(time[0]).minute(time[1]);
+
+      const due = Number(dueMoment.toDate());
+      this.setState({ due });
+    } catch (err) {
+      console.error('Could not parse the input due date and time.');
+    }
   }
 
   onSave() {
@@ -104,8 +127,6 @@ export default class EditDialog extends React.Component {
   }
 
   render() {
-    const due = moment(this.state.due);
-
     if (!this.state.display) {
       return null;
     }
@@ -139,12 +160,12 @@ export default class EditDialog extends React.Component {
               <h4>Due time</h4>
               <input className="dialog-content__input dialog-content__half"
                      type="date"
-                     value={due.format('YYYY-MM-DD')}
+                     placeholder="YYYY-MM-DD"
                      onChange={this.onChangeDue}
                      ref={(t) => this.dueDateInput = t}/>
               <input className="dialog-content__input dialog-content__half"
                      type="time"
-                     value={due.format('HH:mm')}
+                     placeholder="HH:mm"
                      onChange={this.onChangeDue}
                      ref={(t) => this.dueTimeInput = t}/>
             </div>
