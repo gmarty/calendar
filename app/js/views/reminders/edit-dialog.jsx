@@ -19,10 +19,32 @@ export default class EditDialog extends React.Component {
     this.dueDateInput = null;
     this.dueTimeInput = null;
 
+    this.onKeyPress = this.onKeyPress.bind(this);
     this.onChangeAction = this.onChangeAction.bind(this);
     this.onChangeDue = this.onChangeDue.bind(this);
     this.onSave = this.onSave.bind(this);
     this.onClose = this.onClose.bind(this);
+  }
+
+  componentDidMount() {
+    window.document.addEventListener('keydown', this.onKeyPress);
+  }
+
+  componentWillUnmount() {
+    window.document.removeEventListener('keydown', this.onKeyPress);
+  }
+
+  onKeyPress(evt) {
+    const display = this.state.display;
+
+    if (!display) {
+      return;
+    }
+
+    const key = evt.key;
+    if (key === 'Escape') {
+      this.hide();
+    }
   }
 
   onChangeAction(evt) {
@@ -90,7 +112,8 @@ export default class EditDialog extends React.Component {
 
     return (
       <div>
-        <div className="dialog-overlay"></div>
+        <div className="dialog-overlay"
+             onClick={this.onClose}></div>
 
         <div className="dialog">
           <div className="dialog-title">
