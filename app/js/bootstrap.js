@@ -15,7 +15,7 @@ if (!('fetch' in self)) {
   polyfills.push('polyfills/fetch');
 }
 
-polyfills.push('polyfills/webrtc-adapter');
+//polyfills.push('polyfills/webrtc-adapter');
 
 const polyfillsPromise = polyfills.length ?
   require(polyfills) : Promise.resolve();
