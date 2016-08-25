@@ -4,7 +4,6 @@ import RemindersController from './reminders';
 
 import SpeechController from '../lib/speech-controller';
 import Server from '../lib/server/index';
-import Settings from '../lib/common/settings';
 
 const p = Object.freeze({
   controllers: Symbol('controllers'),
@@ -18,12 +17,12 @@ const p = Object.freeze({
 });
 
 export default class MainController extends BaseController {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     const mountNode = document.querySelector('.app-view-container');
     const speechController = new SpeechController();
-    const settings = new Settings();
+    const settings = this.settings;
     const server = new Server({ settings });
     const options = { mountNode, speechController, server, settings };
 
