@@ -35,6 +35,7 @@ const settings = Object.freeze({
   // String settings.
   SESSION: Object.freeze({ key: 'session' }),
   IS_HUB: Object.freeze({ key: 'isHub', type: 'boolean' }),
+  GA_CLIENT_ID: Object.freeze({ key: 'gaClientID' }),
 });
 
 export default class Settings extends EventDispatcher {
@@ -83,6 +84,14 @@ export default class Settings extends EventDispatcher {
 
   set isHub(value) {
     this[p.updateSetting](settings.IS_HUB, value);
+  }
+
+  get gaClientID() {
+    return this[p.values].get(settings.GA_CLIENT_ID);
+  }
+
+  set gaClientID(value) {
+    this[p.updateSetting](settings.GA_CLIENT_ID, value);
   }
 
   // Getters only.

@@ -1,7 +1,11 @@
-import Analytics from './lib/analytics';
+import Settings from './lib/common/settings';
+import Analytics from './controllers/analytics';
 import MainController from './controllers/main';
 
-new Analytics();
-const mainController = new MainController();
-window.app = mainController;
+const options = { settings: new Settings() };
+
+new Analytics(options);
+const mainController = new MainController(options);
 mainController.main();
+
+window.app = mainController;

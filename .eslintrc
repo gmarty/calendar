@@ -61,6 +61,10 @@
     "prefer-template": ["error"]
   },
 
+  "globals": {
+    "ga": true,
+  },
+
   "env": {
     "es6": true,
     "browser": true,
