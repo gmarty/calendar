@@ -22,13 +22,15 @@ export default class Analytics extends BaseController {
       'appName': 'Project Cue',
 
       // Disabling cookies.
-      // @see https://developers.google.com/analytics/devguides/collection/analyticsjs/cookies-user-id#disabling_cookies
+      // @see https://developers.google.com/analytics/devguides/collection/
+      //    analyticsjs/cookies-user-id#disabling_cookies
       'storage': 'none',
       'clientId': this.settings.gaClientID,
     });
 
     // Using localStorage to store the client ID.
-    // @see https://developers.google.com/analytics/devguides/collection/analyticsjs/cookies-user-id#using_localstorage_to_store_the_client_id
+    // @see https://developers.google.com/analytics/devguides/collection/
+    //    analyticsjs/cookies-user-id#using_localstorage_to_store_the_client_id
     ga((tracker) => {
       this.settings.gaClientID = tracker.get('clientId');
     });
