@@ -14,6 +14,7 @@ const p = Object.freeze({
   initHub: Symbol('initHub'),
 
   onHashChanged: Symbol('onHashChanged'),
+  deSlugify: Symbol('deSlugify'),
 });
 
 export default class MainController extends BaseController {
@@ -23,8 +24,11 @@ export default class MainController extends BaseController {
     const mountNode = document.querySelector('.app-view-container');
     const speechController = new SpeechController();
     const settings = this.settings;
+    const analytics = this.analytics;
     const server = new Server({ settings });
-    const options = { mountNode, speechController, server, settings };
+    const options = {
+      mountNode, speechController, server, settings, analytics,
+    };
 
     const usersController = new UsersController(options);
     const remindersController = new RemindersController(options);
@@ -95,12 +99,29 @@ export default class MainController extends BaseController {
     for (const routeName of Object.keys(this[p.controllers])) {
       const match = route.match(new RegExp(`^${routeName}$`));
       if (match) {
+        this.analytics.screenView(this[p.deSlugify](routeName));
         this[p.controllers][routeName].main(...match.slice(1));
         break;
       }
     }
 
     this[p.initHub]();
+  }
+
+  /**
+   * Transform a route expression into a human reading string:
+   * 'users/(.+)' => 'Users'
+   *
+   * @param {string} slug
+   * @returns {string}
+   */
+  [p.deSlugify](slug = 'Unknown') {
+    slug = slug.trim();
+    if (slug === '') {
+      return 'Home';
+    }
+    slug = slug.replace(/[^a-z0-9]/gi, '');
+    return slug[0].toUpperCase() + slug.slice(1);
   }
 
   [p.subscribeToNotifications]() {

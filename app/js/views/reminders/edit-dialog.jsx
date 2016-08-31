@@ -14,6 +14,7 @@ export default class EditDialog extends React.Component {
     };
 
     this.server = props.server;
+    this.analytics = props.analytics;
     this.refreshReminders = props.refreshReminders;
 
     this.dueDateInput = null;
@@ -98,11 +99,16 @@ export default class EditDialog extends React.Component {
     };
     this.server.reminders.update(reminder)
       .then(() => {
+        this.analytics.event('reminders', 'edit');
+
         this.refreshReminders();
         this.hide();
       })
       .catch((err) => {
         console.error(err);
+
+        this.analytics.event('reminders', 'error', 'edit-failed');
+
         this.hide();
         alert('The reminder could not be updated. Try again later.');
       });
@@ -187,5 +193,6 @@ export default class EditDialog extends React.Component {
 
 EditDialog.propTypes = {
   server: React.PropTypes.object.isRequired,
+  analytics: React.PropTypes.object.isRequired,
   refreshReminders: React.PropTypes.func.isRequired,
 };

@@ -10,6 +10,7 @@ export default class Microphone extends React.Component {
 
     this.speechController = props.speechController;
     this.server = props.server;
+    this.analytics = props.analytics;
 
     this.audioCtx = new window.AudioContext();
     this.audioBuffer = null;
@@ -85,6 +86,8 @@ export default class Microphone extends React.Component {
 
   onClickMic() {
     if (!this.state.isListeningToSpeech) {
+      this.analytics.event('microphone', 'tap', 'start-listening');
+
       this.playBleep();
       this.setState({ isListeningToSpeech: true });
       this.timeout = setTimeout(() => {
@@ -94,6 +97,8 @@ export default class Microphone extends React.Component {
       }, 1000);
       return;
     }
+
+    this.analytics.event('microphone', 'tap', 'stop-listening');
 
     clearTimeout(this.timeout);
     this.stopBleep();
@@ -120,4 +125,5 @@ export default class Microphone extends React.Component {
 Microphone.propTypes = {
   speechController: React.PropTypes.object.isRequired,
   server: React.PropTypes.object.isRequired,
+  analytics: React.PropTypes.object.isRequired,
 };

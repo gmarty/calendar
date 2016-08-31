@@ -14,6 +14,7 @@ export default class RemindersList extends React.Component {
     };
 
     this.server = props.server;
+    this.analytics = props.analytics;
     this.refreshReminders = props.refreshReminders;
 
     this.editDialog = null;
@@ -34,11 +35,15 @@ export default class RemindersList extends React.Component {
     // https://github.com/fxbox/calendar/issues/32
     this.server.reminders.delete(id)
       .then(() => {
+        this.analytics.event('reminders', 'delete');
+
         const reminders = this.state.reminders
           .filter((reminder) => reminder.id !== id);
         this.setState({ reminders });
       })
       .catch(() => {
+        this.analytics.event('reminders', 'error', 'delete-failed');
+
         console.error(`The reminder ${id} could not be deleted.`);
       });
   }
@@ -105,6 +110,7 @@ export default class RemindersList extends React.Component {
       <div>
         {remindersNode}
         <EditDialog server={this.server}
+                    analytics={this.analytics}
                     refreshReminders={this.refreshReminders}
                     ref={(t) => this.editDialog = t}/>
       </div>
@@ -114,6 +120,7 @@ export default class RemindersList extends React.Component {
 
 RemindersList.propTypes = {
   server: React.PropTypes.object.isRequired,
+  analytics: React.PropTypes.object.isRequired,
   reminders: React.PropTypes.array.isRequired,
   refreshReminders: React.PropTypes.func.isRequired,
 };
