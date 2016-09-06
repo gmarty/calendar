@@ -105,7 +105,20 @@ export default class Reminders extends React.Component {
   }
 
   onReminder(evt) {
-    const { recipients, action, due, confirmation } = evt.result;
+    const { intent, recipients, action, due, confirmation } = evt.result;
+
+    if (intent !== 'reminder') {
+      console.info('Only intent of type `reminder` are supported now.');
+      const message = 'I can only understand new reminders. ' +
+        'Try saying "Remind me to go the hairdresser tomorrow at 5pm".';
+      this.toaster.info(message);
+      this.speechController.speak(message)
+        .then(() => {
+          this.toaster.hide();
+          this.speechController.startListeningForWakeword();
+        });
+      return;
+    }
 
     this.microphone.stopListeningToSpeech();
 
@@ -131,7 +144,7 @@ export default class Reminders extends React.Component {
           });
       })
       .catch((res) => {
-        console.error('Saving the reminder failed.', res);
+        console.warn('Saving the reminder failed.', res);
 
         this.analytics.event('reminders', 'error', 'create-failed');
 
