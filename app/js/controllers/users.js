@@ -29,7 +29,10 @@ export default class UsersController extends BaseController {
 
   login() {
     ReactDOM.render(
-      React.createElement(UserLogin, { server: this.server }), this.mountNode
+      React.createElement(UserLogin, {
+        server: this.server,
+        analytics: this.analytics,
+      }), this.mountNode
     );
   }
 

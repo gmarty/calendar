@@ -9,6 +9,7 @@ export default class UserLogin extends React.Component {
     };
 
     this.server = props.server;
+    this.analytics = props.analytics;
 
     this.onChange = this.onChange.bind(this);
     this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -24,6 +25,7 @@ export default class UserLogin extends React.Component {
 
     this.server.login(this.state.login, 'password')
       .then(() => {
+        this.analytics.event('user', 'login');
         location.hash = 'reminders';
       });
   }
@@ -45,4 +47,5 @@ export default class UserLogin extends React.Component {
 
 UserLogin.propTypes = {
   server: React.PropTypes.object.isRequired,
+  analytics: React.PropTypes.object.isRequired,
 };

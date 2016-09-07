@@ -15,6 +15,7 @@ export default class Reminders extends React.Component {
 
     this.speechController = props.speechController;
     this.server = props.server;
+    this.analytics = props.analytics;
 
     this.refreshInterval = null;
     this.toaster = null;
@@ -98,6 +99,8 @@ export default class Reminders extends React.Component {
   }
 
   onWakeWord() {
+    this.analytics.event('wakeword', 'recognised');
+
     this.microphone.startListeningToSpeech();
   }
 
@@ -115,6 +118,8 @@ export default class Reminders extends React.Component {
         due,
       })
       .then((reminder) => {
+        this.analytics.event('reminders', 'create');
+
         this.addReminder(reminder);
 
         this.toaster.success(confirmation);
@@ -127,6 +132,9 @@ export default class Reminders extends React.Component {
       })
       .catch((res) => {
         console.error('Saving the reminder failed.', res);
+
+        this.analytics.event('reminders', 'error', 'create-failed');
+
         const message = 'This reminder could not be saved. ' +
           'Please try again later.';
         this.toaster.warning(message);
@@ -140,6 +148,8 @@ export default class Reminders extends React.Component {
 
   onParsingFailure() {
     this.microphone.stopListeningToSpeech();
+
+    this.analytics.event('reminders', 'parsing-failed');
 
     const message = 'I did not understand that. Can you repeat?';
     this.toaster.warning(message);
@@ -171,10 +181,12 @@ export default class Reminders extends React.Component {
         <div className="microphone">
           <Microphone ref={(t) => this.microphone = t}
                       speechController={this.speechController}
-                      server={this.server}/>
+                      server={this.server}
+                      analytics={this.analytics}/>
         </div>
         <RemindersList reminders={this.state.reminders}
                        server={this.server}
+                       analytics={this.analytics}
                        refreshReminders={this.refreshReminders}/>
       </section>
     );
@@ -184,4 +196,5 @@ export default class Reminders extends React.Component {
 Reminders.propTypes = {
   speechController: React.PropTypes.object.isRequired,
   server: React.PropTypes.object.isRequired,
+  analytics: React.PropTypes.object.isRequired,
 };

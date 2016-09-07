@@ -1,8 +1,17 @@
-import BaseController from './base';
+// Private members.
+const p = Object.freeze({
+  ga: Symbol('ga'),
+});
 
-export default class Analytics extends BaseController {
+let instance = null;
+
+export default class Analytics {
   constructor(props) {
-    super(props);
+    if (instance) {
+      return instance;
+    }
+
+    Object.assign(this, props || {});
 
     // Creates an initial ga() function.
     // The queued commands will be executed once analytics.js loads.
@@ -42,5 +51,32 @@ export default class Analytics extends BaseController {
     window.addEventListener('install', () => {
       ga('send', 'event', 'App', 'install');
     });
+
+    this[p.ga] = ga;
+
+    Object.freeze(this);
+
+    instance = this;
+  }
+
+  /**
+   * Send a screenview.
+   *
+   * @param {string} screenName
+   */
+  screenView(screenName = 'Unknown') {
+    this[p.ga]('send', 'screenview', { screenName });
+  }
+
+  /**
+   * Send an event.
+   *
+   * @param {string} category
+   * @param {string} action
+   * @param {string} label
+   * @param {string|number} value
+   */
+  event(category, action, label, value) {
+    this[p.ga]('send', 'event', category, action, label, value);
   }
 }
