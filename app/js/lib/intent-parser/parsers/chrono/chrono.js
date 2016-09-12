@@ -38,7 +38,7 @@ dayPeriodsParser.extract = (text, ref, match) => {
       break;
     case 'night':
     case 'at night':
-      hour = 10;
+      hour = 22;
       meridiem = 1;
       break;
   }
@@ -85,12 +85,14 @@ forwardHoursRefiner.refine = (text, results, opt = {}) => {
   }
 };
 
+let ref = new Date();
 const customChrono = new chrono.Chrono(chrono.options.casualOption());
 customChrono.parsers.push(dayPeriodsParser);
 customChrono.refiners.push(forwardHoursRefiner);
 
 export default {
-  parse: (phrase) => customChrono.parse(phrase, new Date(), {
+  setRef: (newRef) => ref = newRef,
+  parse: (phrase) => customChrono.parse(phrase, ref, {
     forwardDatesOnly: true,
     forwardHoursOnly: true,
   }),

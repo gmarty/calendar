@@ -31,9 +31,9 @@ const PATTERNS = {
     template: `OK, I'll remind [users] [action] [time].`,
     formatUser: (user) => user
       .replace(/\bme\b/gi, 'you')
-      .replace(/\bI'm\b/gi, 'you\'re')
-      .replace(/\bI've\b/gi, 'you\'ve')
-      .replace(/\bI'll\b/gi, 'you\'ll')
+      .replace(/\bI am\b/gi, 'you are')
+      .replace(/\bI have\b/gi, 'you have')
+      .replace(/\bI will\b/gi, 'you will')
       .replace(/\bI\b/gi, 'you')
       .replace(/\bmy\b/gi, 'your')
       .replace(/\bmine\b/gi, 'yours'),
@@ -48,7 +48,7 @@ const PATTERNS = {
   },
 };
 
-export default class Confirmation {
+export default class ReminderConfirmation {
   constructor(locale = DEFAULT_LOCALE) {
     this.locale = locale;
 
@@ -63,7 +63,7 @@ export default class Confirmation {
    * @param {Object} reminder
    * @return {string}
    */
-  getReminderMessage(reminder) {
+  confirm(reminder) {
     const template = this[p.getLocalised]('template');
     const data = {
       users: this[p.formatUser](reminder),
@@ -100,18 +100,22 @@ export default class Confirmation {
   }
 
   [p.formatAction](reminder) {
-    const { action } = reminder;
+    const { action, cleaned } = reminder;
     const formatUser = this[p.getLocalised]('formatUser');
     const formattedAction = formatUser(action);
-    const PATTERN1 = new RegExp(`\\bthat \\[action\\]`, 'iu');
-    const PATTERN2 = new RegExp(`\\bit is \\[action\\]`, 'iu');
-    const PATTERN3 = new RegExp(`\\babout \\[action\\]`, 'iu');
 
-    if (PATTERN1.test(reminder.match)) {
+    const PATTERN1 = new RegExp(`\\bthat ${action}`, 'iu');
+    const PATTERN2 = new RegExp(`\\bit is ${action}`, 'iu');
+    const PATTERN3 = new RegExp(`\\bthere is ${action}`, 'iu');
+    const PATTERN4 = new RegExp(`\\babout ${action}`, 'iu');
+
+    if (PATTERN1.test(cleaned)) {
       return `that ${formattedAction}`;
-    } else if (PATTERN2.test(reminder.match)) {
+    } else if (PATTERN2.test(cleaned)) {
       return `that it is ${formattedAction}`;
-    } else if (PATTERN3.test(reminder.match)) {
+    } else if (PATTERN3.test(cleaned)) {
+      return `that there is ${formattedAction}`;
+    } else if (PATTERN4.test(cleaned)) {
       return `about ${formattedAction}`;
     }
 
@@ -177,7 +181,7 @@ export default class Confirmation {
 
     // Some speech synthesisers pronounce "AM" as in "ham" (not "A. M.").
     return format
-      .replace(/ AM$/gi, ' A.M.')
-      .replace(/ PM$/gi, ' P.M.');
+      .replace(/([0-9]) ?AM$/gi, '$1 A.M.')
+      .replace(/([0-9]) ?PM$/gi, '$1 P.M.');
   }
 }
