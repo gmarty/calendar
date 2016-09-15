@@ -45,7 +45,10 @@ describe('intent-parser', function() {
           recipients: ['Sandra'],
           action: null,
           confirmation: undefined,
-          due: moment({ hour: 22 }).day(3).toDate().getTime(),
+          // Always next Wednesday.
+          due: moment({ hour: 22 }).day(3).isBefore(moment({ hour: 22 })) ?
+            moment({ hour: 22 }).day(10).toDate().getTime() :
+            moment({ hour: 22 }).day(3).toDate().getTime(),
           intent: 'query',
         },
       },
